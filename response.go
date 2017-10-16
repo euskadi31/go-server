@@ -75,7 +75,7 @@ func Failure(w http.ResponseWriter, status int, err ErrorMessage) {
 	}
 
 	if err := json.NewEncoder(w).Encode(body); err != nil {
-		log.Error().Err(err)
+		log.Error().Err(err).Msg("")
 	}
 }
 
