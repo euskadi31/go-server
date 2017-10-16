@@ -8,10 +8,7 @@ HTTP Server Router with middleware
 ```go
 import "github.com/euskadi31/go-server"
 
-router := server.NewRouter(&server.Configuration{
-    Host: "127.0.0.1",
-    Port: 1337,
-})
+router := server.NewRouter()
 
 router.EnableMetrics()
 router.EnableCors()
@@ -23,8 +20,7 @@ router.Use(MyMiddleWare())
 
 router.AddController(MyController())
 
-
-panic(router.ListenAndServe())
+panic(http.ListenAndServe(":1337", router))
 
 ```
 

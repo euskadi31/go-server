@@ -6,5 +6,5 @@ package server
 
 // Controller interface
 type Controller interface {
-	Register(r *Router)
+	Mount(r *Router)
 }
