@@ -9,6 +9,7 @@ import (
 	"net/http"
 
 	"github.com/euskadi31/go-server/metrics"
+	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	"github.com/justinas/alice"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
@@ -24,10 +25,14 @@ type Router struct {
 
 // NewRouter constructor
 func NewRouter() *Router {
-	return &Router{
+	router := &Router{
 		Router:       mux.NewRouter(),
 		healthchecks: make(map[string]HealthCheckHandler),
 	}
+
+	router.Use(handlers.RecoveryHandler())
+
+	return router
 }
 
 // AddHealthCheck handler
@@ -89,18 +94,22 @@ func (r *Router) AddController(controller Controller) {
 	controller.Mount(r)
 }
 
+// AddRoute to Router
 func (r *Router) AddRoute(path string, handler http.Handler) *mux.Route {
 	return r.Handle(path, r.middleware.Then(handler))
 }
 
+// AddRouteFunc to Router
 func (r *Router) AddRouteFunc(path string, handler http.HandlerFunc) *mux.Route {
 	return r.Handle(path, r.middleware.ThenFunc(handler))
 }
 
+// AddPrefixRoute to Router
 func (r *Router) AddPrefixRoute(prefix string, handler http.Handler) *mux.Route {
 	return r.PathPrefix(prefix).Handler(r.middleware.Then(handler))
 }
 
+// AddPrefixRouteFunc to Router
 func (r *Router) AddPrefixRouteFunc(prefix string, handler http.HandlerFunc) *mux.Route {
 	return r.PathPrefix(prefix).Handler(r.middleware.ThenFunc(handler))
 }
