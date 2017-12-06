@@ -17,18 +17,22 @@ type ErrorMessage struct {
 	Message string `json:"message"`
 }
 
+// Error implements ErrorMessageInterface
 func (e ErrorMessage) Error() string {
 	return e.Message
 }
 
+// GetCode implements ErrorMessageInterface
 func (e ErrorMessage) GetCode() int {
 	return e.Code
 }
 
+// GetMessage implements ErrorMessageInterface
 func (e ErrorMessage) GetMessage() string {
 	return e.Message
 }
 
+// ErrorResponse struct
 type ErrorResponse struct {
 	Error ErrorMessage `json:"error"`
 }
