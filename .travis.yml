@@ -27,7 +27,3 @@ script:
   - dep ensure
   - make travis
   - goveralls -service=travis-ci
-
-#deploy:
-#  on:
-#    condition: $TRAVIS_GO_VERSION =~ ^1\.8\.[0-9]+$
