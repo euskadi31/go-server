@@ -25,14 +25,10 @@ type Router struct {
 
 // NewRouter constructor
 func NewRouter() *Router {
-	router := &Router{
+	return &Router{
 		Router:       mux.NewRouter(),
 		healthchecks: make(map[string]HealthCheckHandler),
 	}
-
-	router.Use(handlers.RecoveryHandler())
-
-	return router
 }
 
 // AddHealthCheck handler
@@ -75,6 +71,11 @@ func (r *Router) EnableCors() {
 	r.EnableCorsWithOptions(cors.Options{
 		AllowedOrigins: []string{"*"},
 	})
+}
+
+// EnableRecovery for all endpoint
+func (r *Router) EnableRecovery() {
+	r.Use(handlers.RecoveryHandler())
 }
 
 // EnableCorsWithOptions for all endpoint
