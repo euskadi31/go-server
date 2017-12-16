@@ -83,6 +83,10 @@ func (r *Router) EnableCorsWithOptions(options cors.Options) {
 	c := cors.New(options)
 
 	r.Use(c.Handler)
+
+	r.MethodNotAllowedHandler = c.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+
+	}))
 }
 
 // Use middleware
