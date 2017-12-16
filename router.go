@@ -113,3 +113,13 @@ func (r *Router) AddPrefixRoute(prefix string, handler http.Handler) *mux.Route 
 func (r *Router) AddPrefixRouteFunc(prefix string, handler http.HandlerFunc) *mux.Route {
 	return r.PathPrefix(prefix).Handler(r.middleware.ThenFunc(handler))
 }
+
+// SetNotFound handler
+func (r *Router) SetNotFound(handler http.Handler) {
+	r.NotFoundHandler = r.middleware.Then(handler)
+}
+
+// SetNotFoundFunc handler
+func (r *Router) SetNotFoundFunc(handler http.HandlerFunc) {
+	r.NotFoundHandler = r.middleware.ThenFunc(handler)
+}
