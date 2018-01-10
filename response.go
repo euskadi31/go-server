@@ -10,6 +10,8 @@ import (
 	"net/http"
 	"reflect"
 
+	"github.com/go-openapi/errors"
+	"github.com/go-openapi/validate"
 	"github.com/rs/zerolog/log"
 )
 
@@ -87,5 +89,37 @@ func JSON(w http.ResponseWriter, code int, body interface{}) {
 
 	if err := json.NewEncoder(w).Encode(body); err != nil {
 		FailureFromError(w, http.StatusInternalServerError, err)
+	}
+}
+
+// FailureFromValidator response
+func FailureFromValidator(w http.ResponseWriter, result *validate.Result) {
+	w.Header().Set("Content-Type", "application/json; charset=utf-8")
+	w.Header().Set("X-Content-Type-Options", "nosniff")
+	w.WriteHeader(http.StatusBadRequest)
+
+	body := ErrorsResponse{}
+
+	for _, err := range result.Errors {
+		var item error
+
+		if errValidator, ok := err.(*errors.Validation); ok {
+			item = ValidatorError{
+				Code:    errValidator.Code(),
+				In:      errValidator.In,
+				Name:    errValidator.Name,
+				Message: errValidator.Error(),
+				Value:   errValidator.Value,
+				Values:  errValidator.Values,
+			}
+		} else {
+			item = err
+		}
+
+		body.Errors = append(body.Errors, item)
+	}
+
+	if err := json.NewEncoder(w).Encode(body); err != nil {
+		log.Error().Err(err).Msg("")
 	}
 }
