@@ -32,7 +32,26 @@ func (e ErrorMessage) GetMessage() string {
 	return e.Message
 }
 
+// ValidatorError struct
+type ValidatorError struct {
+	Code    int32         `json:"code,omitempty"`
+	Name    string        `json:"name,omitempty"`
+	In      string        `json:"in,omitempty"`
+	Value   interface{}   `json:"value,omitempty"`
+	Message string        `json:"message"`
+	Values  []interface{} `json:"values,omitempty"`
+}
+
+func (e ValidatorError) Error() string {
+	return e.Message
+}
+
 // ErrorResponse struct
 type ErrorResponse struct {
 	Error ErrorMessage `json:"error"`
+}
+
+// ErrorsResponse struct
+type ErrorsResponse struct {
+	Errors []error `json:"errors"`
 }
