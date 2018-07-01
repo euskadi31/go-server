@@ -1,6 +1,4 @@
-.PHONY: all clean fmt vet test
-
-PACKAGES = $(shell go list ./... | grep -v vendor)
+.PHONY: all clean test cover release over-html
 
 release:
 	@echo "Release v$(version)"
@@ -13,20 +11,22 @@ release:
 	@git checkout develop
 	@echo "Release v$(version) finished."
 
-all: test
+all: coverage.out
+
+coverage.out: $(shell find . -type f -print | grep -v vendor | grep "\.go")
+	@go test -cover -coverprofile ./coverage.out.tmp ./...
+	@cat ./coverage.out.tmp | grep -v '.pb.go' | grep -v 'mock_' > ./coverage.out
+	@rm ./coverage.out.tmp
+
+test: coverage.out
+
+cover: coverage.out
+	@echo ""
+	@go tool cover -func ./coverage.out
+
+cover-html: coverage.out
+	@go tool cover -html=./coverage.out
 
 clean:
+	@rm ./coverage.out
 	@go clean -i ./...
-
-fmt:
-	@go fmt $(PACKAGES)
-
-vet:
-	@go vet $(PACKAGES)
-
-test:
-	@for PKG in $(PACKAGES); do go test -cover -coverprofile $$GOPATH/src/$$PKG/coverage.out $$PKG || exit 1; done;
-
-travis:
-	@for PKG in $(PACKAGES); do go test -cover -covermode=count -coverprofile $$GOPATH/src/$$PKG/coverage.out $$PKG || exit 1; done;
-
