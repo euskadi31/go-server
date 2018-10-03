@@ -7,6 +7,7 @@ package locale
 import (
 	"context"
 	"net/http"
+	"os"
 
 	"golang.org/x/text/language"
 )
@@ -72,6 +73,13 @@ func ToContext(ctx context.Context, locale Locale) context.Context {
 
 // FromContext returns Locale from Context
 func FromContext(ctx context.Context) Locale {
+	if os.Getenv("DEFAULTLANGUAGE") != "" {
+		DefaultLanguage = os.Getenv("DEFAULTLANGUAGE")
+	}
+	if os.Getenv("DEFAULTREGION") != "" {
+		DefaultRegion = os.Getenv("DEFAULTREGION")
+	}
+
 	value, ok := ctx.Value(contextKey).(Locale)
 	if ok {
 		return value
