@@ -49,22 +49,12 @@ func Handler(tracer opentracing.Tracer, ignore RequestIgnorerFunc) func(next htt
 			span := tracer.StartSpan(path, ext.RPCServerOption(wireContext))
 			defer span.Finish()
 
-			ext.HTTPUrl.Set(span, req.URL.Path)
+			ext.HTTPUrl.Set(span, req.URL.String())
 			ext.HTTPMethod.Set(span, req.Method)
 
 			params := mux.Vars(req)
-
-			fields := []otlog.Field{}
 			for k, v := range params {
-				if i, err := strconv.ParseInt(v, 10, 64); err == nil {
-					fields = append(fields, otlog.Int64(k, i))
-				} else {
-					fields = append(fields, otlog.String(k, v))
-				}
-			}
-
-			if len(fields) > 0 {
-				span.LogFields(fields...)
+				span.SetTag(k, v)
 			}
 
 			ctx := req.Context()
