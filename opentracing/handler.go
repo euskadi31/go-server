@@ -47,7 +47,7 @@ func Handler(tracer opentracing.Tracer, ignore RequestIgnorerFunc) func(next htt
 			span := tracer.StartSpan(path, ext.RPCServerOption(wireContext))
 			defer span.Finish()
 
-			ext.HTTPUrl.Set(span, req.URL.String())
+			ext.HTTPUrl.Set(span, req.URL.RequestURI())
 			ext.HTTPMethod.Set(span, req.Method)
 
 			params := mux.Vars(req)
