@@ -37,7 +37,7 @@ func Handler(tracer opentracing.Tracer, ignore RequestIgnorerFunc) func(next htt
 			}
 
 			wireContext, err := tracer.Extract(
-				opentracing.TextMap,
+				opentracing.HTTPHeaders,
 				opentracing.HTTPHeadersCarrier(req.Header),
 			)
 			if err != nil {
@@ -67,7 +67,8 @@ func Handler(tracer opentracing.Tracer, ignore RequestIgnorerFunc) func(next htt
 				span.LogFields(fields...)
 			}
 
-			ctx := opentracing.ContextWithSpan(req.Context(), span)
+			ctx := req.Context()
+			ctx = opentracing.ContextWithSpan(ctx, span)
 
 			req = req.WithContext(ctx)
 

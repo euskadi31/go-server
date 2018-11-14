@@ -49,7 +49,7 @@ func WrapRequest(ctx context.Context, req *http.Request) *http.Request {
 	// Inject the Span context into the outgoing HTTP Request.
 	if err := opentracing.GlobalTracer().Inject(
 		span.Context(),
-		opentracing.TextMap,
+		opentracing.HTTPHeaders,
 		opentracing.HTTPHeadersCarrier(req.Header),
 	); err != nil {
 		log.Error().Err(err).Msg("trying to inject span")
