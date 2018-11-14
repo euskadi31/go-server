@@ -12,6 +12,7 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/opentracing/opentracing-go"
 	"github.com/opentracing/opentracing-go/ext"
+	otlog "github.com/opentracing/opentracing-go/log"
 	"github.com/rs/zerolog/log"
 )
 
@@ -46,6 +47,17 @@ func Handler(tracer opentracing.Tracer, ignore RequestIgnorerFunc) func(next htt
 
 			span := tracer.StartSpan(path, ext.RPCServerOption(wireContext))
 			defer span.Finish()
+
+			params := mux.Vars(req)
+
+			fields := []otlog.Field{}
+			for k, v := range params {
+				fields = append(fields, otlog.String(k, v))
+			}
+
+			if len(fields) > 0 {
+				span.LogFields(fields...)
+			}
 
 			ctx := opentracing.ContextWithSpan(req.Context(), span)
 
