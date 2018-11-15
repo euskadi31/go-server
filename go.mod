@@ -36,6 +36,7 @@ require (
 	github.com/rs/cors v0.0.0-20170727213201-7af7a1e09ba3
 	github.com/rs/zerolog v1.3.0
 	github.com/stretchr/testify v1.2.2
+	github.com/zenazn/goji v0.9.0
 	golang.org/x/net v0.0.0-20180108090419-434ec0c7fe37 // indirect
 	golang.org/x/sync v0.0.0-20180314180146-1d60e4601c6f // indirect
 	golang.org/x/text v0.0.0-20171227012246-e19ae1496984

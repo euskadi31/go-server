@@ -14,6 +14,7 @@ import (
 	"github.com/opentracing/opentracing-go"
 	"github.com/opentracing/opentracing-go/ext"
 	"github.com/rs/zerolog/log"
+	"github.com/zenazn/goji/web/mutil"
 )
 
 // RequestIgnorerFunc is the type of a function for use in
@@ -34,6 +35,8 @@ func Handler(tracer opentracing.Tracer, ignore RequestIgnorerFunc) func(next htt
 
 				return
 			}
+
+			lw := mutil.WrapWriter(w)
 
 			wireContext, err := tracer.Extract(
 				opentracing.HTTPHeaders,
@@ -61,7 +64,11 @@ func Handler(tracer opentracing.Tracer, ignore RequestIgnorerFunc) func(next htt
 
 			req = req.WithContext(ctx)
 
-			next.ServeHTTP(w, req)
+			next.ServeHTTP(lw, req)
+
+			ext.HTTPStatusCode.Set(span, uint16(lw.Status()))
+
+			span.SetTag("result", statusCodeResult(lw.Status()))
 		})
 	}
 }
@@ -145,4 +152,23 @@ func braceIndices(s string) []int {
 	}
 
 	return idxs
+}
+
+var standardStatusCodeResults = [...]string{
+	"HTTP 1xx",
+	"HTTP 2xx",
+	"HTTP 3xx",
+	"HTTP 4xx",
+	"HTTP 5xx",
+}
+
+// statusCodeResult returns the transaction result value to use for the given
+// status code.
+func statusCodeResult(statusCode int) string {
+	switch i := statusCode / 100; i {
+	case 1, 2, 3, 4, 5:
+		return standardStatusCodeResults[i-1]
+	}
+
+	return fmt.Sprintf("HTTP %d", statusCode)
 }
