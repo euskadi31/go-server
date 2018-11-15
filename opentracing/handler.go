@@ -6,6 +6,7 @@ package opentracing
 
 import (
 	"bytes"
+	"fmt"
 	"net/http"
 	"strings"
 
@@ -47,7 +48,7 @@ func Handler(tracer opentracing.Tracer, ignore RequestIgnorerFunc) func(next htt
 			span := tracer.StartSpan(path, ext.RPCServerOption(wireContext))
 			defer span.Finish()
 
-			ext.HTTPUrl.Set(span, req.URL.RequestURI())
+			ext.HTTPUrl.Set(span, fmt.Sprintf("http://%s%s", req.Host, req.URL.Path))
 			ext.HTTPMethod.Set(span, req.Method)
 
 			params := mux.Vars(req)
