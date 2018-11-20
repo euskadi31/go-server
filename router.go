@@ -7,19 +7,17 @@ package server
 import (
 	"fmt"
 	"net/http"
+	"net/http/pprof"
 
 	"github.com/euskadi31/go-server/metrics"
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
-	"github.com/justinas/alice"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
-	"github.com/rs/cors"
 )
 
 // Router struct
 type Router struct {
 	*mux.Router
-	middleware   alice.Chain
 	healthchecks map[string]HealthCheckHandler
 }
 
@@ -44,7 +42,7 @@ func (r *Router) AddHealthCheck(name string, handle HealthCheckHandler) error {
 
 // EnableHealthCheck endpoint
 func (r *Router) EnableHealthCheck() {
-	r.AddRouteFunc("/health", r.healthHandler).Methods("GET", "HEAD")
+	r.AddRouteFunc("/health", r.healthHandler).Methods(http.MethodGet, "HEAD")
 }
 
 func (r *Router) healthHandler(w http.ResponseWriter, req *http.Request) {
@@ -63,14 +61,37 @@ func (r *Router) healthHandler(w http.ResponseWriter, req *http.Request) {
 func (r *Router) EnableMetrics() {
 	r.Use(metrics.NewHandler())
 
-	r.Handle("/metrics", promhttp.Handler()).Methods("GET")
+	r.Handle("/metrics", promhttp.Handler()).Methods(http.MethodGet)
 }
 
 // EnableCors for all endpoint
 func (r *Router) EnableCors() {
-	r.EnableCorsWithOptions(cors.Options{
-		AllowedOrigins: []string{"*"},
-	})
+	r.EnableCorsWithOptions(handlers.AllowedOrigins([]string{
+		"*",
+	}))
+}
+
+// EnableProxy for populating r.RemoteAddr and r.URL.Scheme based on the X-Forwarded-For,
+// X-Real-IP, X-Forwarded-Proto and RFC7239 Forwarded headers when running
+// a Go server behind a HTTP reverse proxy.
+func (r *Router) EnableProxy() {
+	r.Use(func() func(h http.Handler) http.Handler {
+		return handlers.ProxyHeaders
+	}())
+}
+
+// EnableProfiling with pprof
+func (r *Router) EnableProfiling() {
+	r.HandleFunc("/debug/pprof", pprof.Index).Methods(http.MethodGet)
+	r.HandleFunc("/debug/pprof/cmdline", pprof.Cmdline).Methods(http.MethodGet)
+	r.HandleFunc("/debug/pprof/symbol", pprof.Symbol).Methods(http.MethodGet)
+	r.HandleFunc("/debug/pprof/symbol", pprof.Symbol).Methods(http.MethodPost)
+	r.HandleFunc("/debug/pprof/profile", pprof.Profile).Methods(http.MethodGet)
+
+	r.Handle("/debug/pprof/heap", pprof.Handler("heap")).Methods(http.MethodGet)
+	r.Handle("/debug/pprof/goroutine", pprof.Handler("goroutine")).Methods(http.MethodGet)
+	r.Handle("/debug/pprof/block", pprof.Handler("block")).Methods(http.MethodGet)
+	r.Handle("/debug/pprof/threadcreate", pprof.Handler("threadcreate")).Methods(http.MethodGet)
 }
 
 // EnableRecovery for all endpoint
@@ -79,19 +100,8 @@ func (r *Router) EnableRecovery() {
 }
 
 // EnableCorsWithOptions for all endpoint
-func (r *Router) EnableCorsWithOptions(options cors.Options) {
-	c := cors.New(options)
-
-	r.Use(c.Handler)
-
-	r.MethodNotAllowedHandler = c.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-
-	}))
-}
-
-// Use middleware
-func (r *Router) Use(middleware ...alice.Constructor) {
-	r.middleware = r.middleware.Append(middleware...)
+func (r *Router) EnableCorsWithOptions(opts ...handlers.CORSOption) {
+	r.Use(handlers.CORS(opts...))
 }
 
 // AddController to Router
@@ -100,31 +110,35 @@ func (r *Router) AddController(controller Controller) {
 }
 
 // AddRoute to Router
+// Deprecated: Use server.Handle() instead.
 func (r *Router) AddRoute(path string, handler http.Handler) *mux.Route {
-	return r.Handle(path, r.middleware.Then(handler))
+	return r.Handle(path, handler)
 }
 
 // AddRouteFunc to Router
+// Deprecated: Use server.HandleFunc() instead.
 func (r *Router) AddRouteFunc(path string, handler http.HandlerFunc) *mux.Route {
-	return r.Handle(path, r.middleware.ThenFunc(handler))
+	return r.HandleFunc(path, handler)
 }
 
 // AddPrefixRoute to Router
+// Deprecated: Use server.PathPrefix(prefix).Handler() instead.
 func (r *Router) AddPrefixRoute(prefix string, handler http.Handler) *mux.Route {
-	return r.PathPrefix(prefix).Handler(r.middleware.Then(handler))
+	return r.PathPrefix(prefix).Handler(handler)
 }
 
 // AddPrefixRouteFunc to Router
+// Deprecated: Use server.PathPrefix(prefix).HandlerFunc() instead.
 func (r *Router) AddPrefixRouteFunc(prefix string, handler http.HandlerFunc) *mux.Route {
-	return r.PathPrefix(prefix).Handler(r.middleware.ThenFunc(handler))
+	return r.PathPrefix(prefix).HandlerFunc(handler)
 }
 
 // SetNotFound handler
 func (r *Router) SetNotFound(handler http.Handler) {
-	r.NotFoundHandler = r.middleware.Then(handler)
+	r.NotFoundHandler = handler
 }
 
 // SetNotFoundFunc handler
 func (r *Router) SetNotFoundFunc(handler http.HandlerFunc) {
-	r.NotFoundHandler = r.middleware.ThenFunc(handler)
+	r.NotFoundHandler = handler
 }

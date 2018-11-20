@@ -20,7 +20,7 @@ require (
 	github.com/golang/protobuf v1.2.0 // indirect
 	github.com/gorilla/context v1.1.1 // indirect
 	github.com/gorilla/handlers v1.3.0
-	github.com/gorilla/mux v1.5.0
+	github.com/gorilla/mux v1.6.2
 	github.com/justinas/alice v0.0.0-20160910103822-1051eaf52fca
 	github.com/kr/pretty v0.1.0 // indirect
 	github.com/mailru/easyjson v0.0.0-20171120080333-32fa128f234d // indirect
