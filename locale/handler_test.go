@@ -15,7 +15,7 @@ import (
 )
 
 func TestLocaleHandlerWithoutAcceptLanguage(t *testing.T) {
-	req := httptest.NewRequest("GET", "http://example.com/foo", nil)
+	req := httptest.NewRequest(http.MethodGet, "http://example.com/foo", nil)
 	w := httptest.NewRecorder()
 
 	middleware := alice.New(Handler()).ThenFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -29,7 +29,7 @@ func TestLocaleHandlerWithoutAcceptLanguage(t *testing.T) {
 
 func TestLocaleHandlerWithComplexAcceptLanguage(t *testing.T) {
 
-	req := httptest.NewRequest("GET", "http://example.com/foo", nil)
+	req := httptest.NewRequest(http.MethodGet, "http://example.com/foo", nil)
 	w := httptest.NewRecorder()
 
 	middleware := alice.New(Handler()).ThenFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -45,7 +45,7 @@ func TestLocaleHandlerWithComplexAcceptLanguage(t *testing.T) {
 
 func TestLocaleHandlerWithoutSupportedLanguage(t *testing.T) {
 
-	req := httptest.NewRequest("GET", "http://example.com/foo", nil)
+	req := httptest.NewRequest(http.MethodGet, "http://example.com/foo", nil)
 	w := httptest.NewRecorder()
 
 	middleware := alice.New(Handler()).ThenFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -61,7 +61,7 @@ func TestLocaleHandlerWithoutSupportedLanguage(t *testing.T) {
 
 func TestLocaleHandlerWithConfig(t *testing.T) {
 
-	req := httptest.NewRequest("GET", "http://example.com/foo", nil)
+	req := httptest.NewRequest(http.MethodGet, "http://example.com/foo", nil)
 	w := httptest.NewRecorder()
 
 	middleware := alice.New(HandlerWithConfig([]string{"fr", "en", "es", "it"})).ThenFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -78,7 +78,7 @@ func TestLocaleHandlerWithConfig(t *testing.T) {
 
 func TestLocaleHandlerWithConfiAndAcceptLanguageMixed(t *testing.T) {
 
-	req := httptest.NewRequest("GET", "http://example.com/foo", nil)
+	req := httptest.NewRequest(http.MethodGet, "http://example.com/foo", nil)
 	w := httptest.NewRecorder()
 
 	middleware := alice.New(HandlerWithConfig([]string{"fr", "en", "es", "it"})).ThenFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -97,7 +97,7 @@ func TestLocaleHandlerWithConfiAndAcceptLanguageMixed(t *testing.T) {
 
 func TestLocaleHandlerWithConfigWithSimpleLocale(t *testing.T) {
 
-	req := httptest.NewRequest("GET", "http://example.com/foo", nil)
+	req := httptest.NewRequest(http.MethodGet, "http://example.com/foo", nil)
 	w := httptest.NewRecorder()
 
 	middleware := alice.New(HandlerWithConfig([]string{"fr", "en", "es", "it"})).ThenFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -114,7 +114,7 @@ func TestLocaleHandlerWithConfigWithSimpleLocale(t *testing.T) {
 
 func TestLocaleHandlerWithConfigWithSimpleLocaleNotSupported(t *testing.T) {
 
-	req := httptest.NewRequest("GET", "http://example.com/foo", nil)
+	req := httptest.NewRequest(http.MethodGet, "http://example.com/foo", nil)
 	w := httptest.NewRecorder()
 
 	middleware := alice.New(HandlerWithConfig([]string{"fr", "en", "es", "it"})).ThenFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -139,13 +139,12 @@ func TestFromContext(t *testing.T) {
 }
 
 func BenchmarkHandler(b *testing.B) {
-	req := httptest.NewRequest("GET", "http://example.com/foo", nil)
+	req := httptest.NewRequest(http.MethodGet, "http://example.com/foo", nil)
 
 	middleware := alice.New(HandlerWithConfig([]string{"fr", "en", "es", "it"})).ThenFunc(func(w http.ResponseWriter, r *http.Request) {
 		FromContext(r.Context())
 	})
 
-	// run the Fib function b.N times
 	for n := 0; n < b.N; n++ {
 		w := httptest.NewRecorder()
 

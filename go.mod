@@ -33,8 +33,8 @@ require (
 	github.com/prometheus/client_model v0.0.0-20170216185247-6f3806018612 // indirect
 	github.com/prometheus/common v0.0.0-20171006141418-1bab55dd05db // indirect
 	github.com/prometheus/procfs v0.0.0-20170703101242-e645f4e5aaa8 // indirect
-	github.com/rs/cors v0.0.0-20170727213201-7af7a1e09ba3
 	github.com/rs/zerolog v1.3.0
+	github.com/stretchr/objx v0.1.1 // indirect
 	github.com/stretchr/testify v1.2.2
 	github.com/zenazn/goji v0.9.0
 	golang.org/x/net v0.0.0-20180108090419-434ec0c7fe37 // indirect

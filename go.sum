@@ -67,10 +67,10 @@ github.com/prometheus/common v0.0.0-20171006141418-1bab55dd05db h1:PmL7nSW2mvuot
 github.com/prometheus/common v0.0.0-20171006141418-1bab55dd05db/go.mod h1:daVV7qP5qjZbuso7PdcryaAu0sAZbrN9i7WWcTMWvro=
 github.com/prometheus/procfs v0.0.0-20170703101242-e645f4e5aaa8 h1:uZfczEBIA1FZfOQo4/JWgGnMNd/4HVsM9A+B30wtlkA=
 github.com/prometheus/procfs v0.0.0-20170703101242-e645f4e5aaa8/go.mod h1:c3At6R/oaqEKCNdg8wHV1ftS6bRYblBhIjjI8uT2IGk=
-github.com/rs/cors v0.0.0-20170727213201-7af7a1e09ba3 h1:86ukAHRTa2CXdBnWJHcjjPPGTyLGEF488OFRsbBAuFs=
-github.com/rs/cors v0.0.0-20170727213201-7af7a1e09ba3/go.mod h1:gFx+x8UowdsKA9AchylcLynDq+nNFfI8FkUZdN/jGCU=
 github.com/rs/zerolog v1.3.0 h1:41wFrny/ZdgqdUXn9bLpgD134OGZSbLv1bLzFMnfzAA=
 github.com/rs/zerolog v1.3.0/go.mod h1:YbFCdg8HfsridGWAh22vktObvhZbQsZXe4/zB0OKkWU=
+github.com/stretchr/objx v0.1.1 h1:2vfRuCMp5sSVIDSqO8oNnWJq7mPa6KVP3iPIwFBuy8A=
+github.com/stretchr/objx v0.1.1/go.mod h1:HFkY916IF+rwdDfMAkV7OtwuqBVzrE8GR6GFx+wExME=
 github.com/stretchr/testify v1.2.2 h1:bSDNvY7ZPG5RlJ8otE/7V6gMiyenm9RtJ7IUVIAoJ1w=
 github.com/stretchr/testify v1.2.2/go.mod h1:a8OnRcib4nhh0OaRAV+Yts87kKdq0PP7pXfy6kDkUVs=
 github.com/zenazn/goji v0.9.0 h1:RSQQAbXGArQ0dIDEq+PI6WqN6if+5KHu6x2Cx/GXLTQ=
