@@ -6,13 +6,15 @@ package metrics
 
 import (
 	"net/http"
+	"strconv"
 	"time"
 
 	"github.com/prometheus/client_golang/prometheus"
+	"github.com/zenazn/goji/web/mutil"
 )
 
-// NewHandler instanciates a new mysql HTTP handler.
-func NewHandler() func(http.Handler) http.Handler {
+// Handler instanciates a new mysql HTTP handler.
+func Handler() func(http.Handler) http.Handler {
 	duration := prometheus.NewHistogram(
 		prometheus.HistogramOpts{
 			Name:    "http_request_duration_seconds",
@@ -28,20 +30,25 @@ func NewHandler() func(http.Handler) http.Handler {
 			Name: "http_request_total",
 			Help: "The count of request.",
 		},
-		[]string{},
+		[]string{"status", "method"},
 	)
 
 	prometheus.MustRegister(request)
 
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			request.WithLabelValues().Add(1)
+			lw := mutil.WrapWriter(w)
 
 			ts := time.Now()
 
-			next.ServeHTTP(w, r)
+			next.ServeHTTP(lw, r)
 
 			duration.Observe(time.Since(ts).Seconds())
+
+			request.With(prometheus.Labels{
+				"status": strconv.FormatInt(int64(lw.Status()), 10),
+				"method": r.Method,
+			}).Add(1)
 		})
 	}
 }

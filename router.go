@@ -59,7 +59,7 @@ func (r *Router) healthHandler(w http.ResponseWriter, req *http.Request) {
 
 // EnableMetrics endpoint
 func (r *Router) EnableMetrics() {
-	r.Use(metrics.NewHandler())
+	r.Use(metrics.Handler())
 
 	r.Handle("/metrics", promhttp.Handler()).Methods(http.MethodGet)
 }
