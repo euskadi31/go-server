@@ -5,6 +5,8 @@
 package server
 
 import (
+	"context"
+	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -22,7 +24,7 @@ func TestRouterEnableMetrics(t *testing.T) {
 
 	router.ServeHTTP(w, req)
 
-	assert.Equal(t, 200, w.Code)
+	assert.Equal(t, http.StatusOK, w.Code)
 }
 
 func TestRouterEnableHealthCheck(t *testing.T) {
@@ -33,9 +35,43 @@ func TestRouterEnableHealthCheck(t *testing.T) {
 
 	router.EnableHealthCheck()
 
+	err := router.AddHealthCheck("redis", func(ctx context.Context) bool {
+		return true
+	})
+	assert.NoError(t, err)
+
+	err = router.AddHealthCheck("redis", func(ctx context.Context) bool {
+		return true
+	})
+	assert.Error(t, err)
+
 	router.ServeHTTP(w, req)
 
-	assert.Equal(t, 200, w.Code)
+	assert.Equal(t, http.StatusOK, w.Code)
+	b, err := ioutil.ReadAll(w.Body)
+	assert.NoError(t, err)
+	assert.Contains(t, string(b), "redis")
+}
+
+func TestRouterHealthCheckFailed(t *testing.T) {
+	req := httptest.NewRequest(http.MethodGet, "http://example.com/health", nil)
+	w := httptest.NewRecorder()
+
+	router := NewRouter()
+
+	router.EnableHealthCheck()
+
+	err := router.AddHealthCheck("redis", func(ctx context.Context) bool {
+		return false
+	})
+	assert.NoError(t, err)
+
+	router.ServeHTTP(w, req)
+
+	assert.Equal(t, http.StatusServiceUnavailable, w.Code)
+	b, err := ioutil.ReadAll(w.Body)
+	assert.NoError(t, err)
+	assert.Contains(t, string(b), "redis")
 }
 
 func TestRouterEnableCors(t *testing.T) {
@@ -54,7 +90,7 @@ func TestRouterEnableCors(t *testing.T) {
 
 	router.ServeHTTP(w, req)
 
-	assert.Equal(t, 200, w.Code)
+	assert.Equal(t, http.StatusOK, w.Code)
 	assert.Equal(t, "*", w.Header().Get("Access-Control-Allow-Origin"))
 }
 
@@ -75,7 +111,7 @@ func TestRouterEnableProxy(t *testing.T) {
 
 	router.ServeHTTP(w, req)
 
-	assert.Equal(t, 200, w.Code)
+	assert.Equal(t, http.StatusOK, w.Code)
 }
 
 func TestRouterEnableProfiling(t *testing.T) {
@@ -137,4 +173,158 @@ func TestRouterEnableProfiling(t *testing.T) {
 
 		assert.Equal(t, item.status, w.Code)
 	}
+}
+
+func TestRouterEnableRecovery(t *testing.T) {
+	req := httptest.NewRequest(http.MethodGet, "http://example.com/", nil)
+	req.Header.Add("X-Forwarded-For", "127.0.0.1")
+
+	w := httptest.NewRecorder()
+
+	router := NewRouter()
+
+	router.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		panic("test")
+	}).Methods(http.MethodGet)
+
+	router.EnableRecovery()
+
+	router.ServeHTTP(w, req)
+
+	assert.Equal(t, http.StatusInternalServerError, w.Code)
+}
+
+type testController struct {
+}
+
+func (c testController) Mount(r *Router) {
+	r.HandleFunc("/controller", c.handler).Methods(http.MethodGet)
+}
+
+func (c testController) handler(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(http.StatusNoContent)
+}
+
+func TestRouterAddController(t *testing.T) {
+	req := httptest.NewRequest(http.MethodGet, "http://example.com/controller", nil)
+
+	w := httptest.NewRecorder()
+
+	router := NewRouter()
+
+	router.AddController(&testController{})
+
+	router.ServeHTTP(w, req)
+
+	assert.Equal(t, http.StatusNoContent, w.Code)
+}
+
+type testRoute struct {
+}
+
+func (testRoute) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(http.StatusNoContent)
+}
+
+func TestRouterAddRoute(t *testing.T) {
+	req := httptest.NewRequest(http.MethodGet, "http://example.com/route", nil)
+
+	w := httptest.NewRecorder()
+
+	router := NewRouter()
+
+	router.AddRoute("/route", &testRoute{})
+
+	router.ServeHTTP(w, req)
+
+	assert.Equal(t, http.StatusNoContent, w.Code)
+}
+
+func TestRouterAddRouteFunc(t *testing.T) {
+	req := httptest.NewRequest(http.MethodGet, "http://example.com/route-func", nil)
+
+	w := httptest.NewRecorder()
+
+	router := NewRouter()
+
+	router.AddRouteFunc("/route-func", func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusNoContent)
+	})
+
+	router.ServeHTTP(w, req)
+
+	assert.Equal(t, http.StatusNoContent, w.Code)
+}
+
+func TestRouterAddPrefixRoute(t *testing.T) {
+	req := httptest.NewRequest(http.MethodGet, "http://example.com/route/foo", nil)
+
+	w := httptest.NewRecorder()
+
+	router := NewRouter()
+
+	router.AddPrefixRoute("/route/", &testRoute{})
+
+	router.ServeHTTP(w, req)
+
+	assert.Equal(t, http.StatusNoContent, w.Code)
+}
+
+func TestRouterAddPrefixRouteFunc(t *testing.T) {
+	req := httptest.NewRequest(http.MethodGet, "http://example.com/route-func/foo", nil)
+
+	w := httptest.NewRecorder()
+
+	router := NewRouter()
+
+	router.AddPrefixRouteFunc("/route-func/", func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusNoContent)
+	})
+
+	router.ServeHTTP(w, req)
+
+	assert.Equal(t, http.StatusNoContent, w.Code)
+}
+
+type testNotFound struct {
+}
+
+func (testNotFound) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(http.StatusNotFound)
+	w.Write([]byte("true"))
+}
+
+func TestRouterSetNotFound(t *testing.T) {
+	req := httptest.NewRequest(http.MethodGet, "http://example.com/route-func/foo", nil)
+
+	w := httptest.NewRecorder()
+
+	router := NewRouter()
+	router.SetNotFound(&testNotFound{})
+
+	router.ServeHTTP(w, req)
+
+	assert.Equal(t, http.StatusNotFound, w.Code)
+	b, err := ioutil.ReadAll(w.Body)
+	assert.NoError(t, err)
+	assert.Equal(t, "true", string(b))
+}
+
+func TestRouterSetNotFoundFunc(t *testing.T) {
+	req := httptest.NewRequest(http.MethodGet, "http://example.com/route-func/foo", nil)
+
+	w := httptest.NewRecorder()
+
+	router := NewRouter()
+	router.SetNotFoundFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusNotFound)
+		w.Write([]byte("true"))
+	})
+
+	router.ServeHTTP(w, req)
+
+	assert.Equal(t, http.StatusNotFound, w.Code)
+	b, err := ioutil.ReadAll(w.Body)
+	assert.NoError(t, err)
+	assert.Equal(t, "true", string(b))
 }
