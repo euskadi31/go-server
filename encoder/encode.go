@@ -5,15 +5,26 @@
 package encoder
 
 import (
+	"mime"
 	"net/http"
+
+	"github.com/rs/zerolog/log"
 )
+
+const defaultMediatype = "application/json"
 
 // Encode data to HTTP response
 func Encode(w http.ResponseWriter, r *http.Request, status int, data interface{}) {
-	//@TODO: use Accept header for choose encoder
-	encoder, ok := encoders["application/json"]
-	if !ok {
+	mediatype, _, err := mime.ParseMediaType(r.Header.Get("Accept"))
+	if err != nil {
 		//@TODO: error
+	}
+
+	encoder, ok := encoders[mediatype]
+	if !ok {
+		log.Warn().Msgf("invalid accept type %s, using default type %s", mediatype, defaultMediatype)
+
+		encoder = encoders[defaultMediatype]
 	}
 
 	if err := encoder.Encode(w, data); err != nil {
