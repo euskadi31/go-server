@@ -12,8 +12,8 @@ import (
 type jsonEncoder struct {
 }
 
-// NewJSONEncoder construct
-func NewJSONEncoder() Encoder {
+// JSONEncoder construct
+func JSONEncoder() Encoder {
 	return &jsonEncoder{}
 }
 
