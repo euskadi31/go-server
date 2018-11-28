@@ -17,6 +17,7 @@ require (
 	github.com/go-openapi/swag v0.0.0-20180908172849-dd0dad036e67 // indirect
 	github.com/go-openapi/validate v0.0.0-20180110180619-fa47bbf926a7
 	github.com/go-yaml/yaml v2.1.0+incompatible
+	github.com/golang/gddo v0.0.0-20181116215533-9bd4a3295021
 	github.com/golang/protobuf v1.2.0 // indirect
 	github.com/gorilla/context v1.1.1 // indirect
 	github.com/gorilla/handlers v1.3.0
