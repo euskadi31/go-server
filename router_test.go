@@ -5,7 +5,6 @@
 package server
 
 import (
-	"context"
 	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
@@ -35,14 +34,14 @@ func TestRouterEnableHealthCheck(t *testing.T) {
 
 	router.EnableHealthCheck()
 
-	err := router.AddHealthCheck("redis", func(ctx context.Context) bool {
+	err := router.AddHealthCheck("redis", HealthCheckHandlerFunc(func() bool {
 		return true
-	})
+	}))
 	assert.NoError(t, err)
 
-	err = router.AddHealthCheck("redis", func(ctx context.Context) bool {
+	err = router.AddHealthCheck("redis", HealthCheckHandlerFunc(func() bool {
 		return true
-	})
+	}))
 	assert.Error(t, err)
 
 	router.ServeHTTP(w, req)
@@ -61,9 +60,9 @@ func TestRouterHealthCheckFailed(t *testing.T) {
 
 	router.EnableHealthCheck()
 
-	err := router.AddHealthCheck("redis", func(ctx context.Context) bool {
+	err := router.AddHealthCheck("redis", HealthCheckHandlerFunc(func() bool {
 		return false
-	})
+	}))
 	assert.NoError(t, err)
 
 	router.ServeHTTP(w, req)

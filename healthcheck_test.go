@@ -5,18 +5,18 @@
 package server
 
 import (
-	"context"
 	"testing"
 )
 
 func TestHealthcheckProcessor(t *testing.T) {
 	healthchecks := make(map[string]HealthCheckHandler)
 
-	healthchecks["mysql"] = func(ctx context.Context) bool {
-		return true
-	}
+	mysql := &MockHealthCheckHandler{}
+	mysql.On("Check").Return(true)
 
-	response := healthCheckProcessor(context.Background(), healthchecks)
+	healthchecks["mysql"] = mysql
+
+	response := healthCheckProcessor(healthchecks)
 
 	if response.Status != true {
 		t.Error("response.Status is not true")
@@ -30,15 +30,17 @@ func TestHealthcheckProcessor(t *testing.T) {
 func TestHealthcheckProcessorWithFailedCheck(t *testing.T) {
 	healthchecks := make(map[string]HealthCheckHandler)
 
-	healthchecks["mysql"] = func(ctx context.Context) bool {
-		return true
-	}
+	mysql := &MockHealthCheckHandler{}
+	mysql.On("Check").Return(true)
 
-	healthchecks["redis"] = func(ctx context.Context) bool {
-		return false
-	}
+	healthchecks["mysql"] = mysql
 
-	response := healthCheckProcessor(context.Background(), healthchecks)
+	redis := &MockHealthCheckHandler{}
+	redis.On("Check").Return(false)
+
+	healthchecks["redis"] = redis
+
+	response := healthCheckProcessor(healthchecks)
 
 	if response.Status != false {
 		t.Error("response.Status is not false")

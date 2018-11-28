@@ -5,12 +5,22 @@
 package server
 
 import (
-	"context"
 	"sync"
 )
 
 // HealthCheckHandler type
-type HealthCheckHandler func(context.Context) bool
+//go:generate mockery -case=underscore -inpkg -name=HealthCheckHandler
+type HealthCheckHandler interface {
+	Check() bool
+}
+
+// HealthCheckHandlerFunc handler
+type HealthCheckHandlerFunc func() bool
+
+// Check calls f().
+func (f HealthCheckHandlerFunc) Check() bool {
+	return f()
+}
 
 // HealthCheckResponse struct
 type HealthCheckResponse struct {
@@ -18,7 +28,7 @@ type HealthCheckResponse struct {
 	Services map[string]bool `json:"services"`
 }
 
-func healthCheckProcessor(ctx context.Context, healthchecks map[string]HealthCheckHandler) HealthCheckResponse {
+func healthCheckProcessor(healthchecks map[string]HealthCheckHandler) HealthCheckResponse {
 	response := HealthCheckResponse{
 		Status:   true,
 		Services: make(map[string]bool),
@@ -33,7 +43,7 @@ func healthCheckProcessor(ctx context.Context, healthchecks map[string]HealthChe
 			mutex.Lock()
 			defer mutex.Unlock()
 
-			s := h(ctx)
+			s := h.Check()
 
 			response.Services[n] = s
 

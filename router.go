@@ -48,7 +48,7 @@ func (r *Router) EnableHealthCheck() {
 func (r *Router) healthHandler(w http.ResponseWriter, req *http.Request) {
 	code := http.StatusOK
 
-	response := healthCheckProcessor(req.Context(), r.healthchecks)
+	response := healthCheckProcessor(r.healthchecks)
 
 	if !response.Status {
 		code = http.StatusServiceUnavailable
