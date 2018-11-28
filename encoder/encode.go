@@ -15,9 +15,13 @@ const defaultMediatype = "application/json"
 
 // Encode data to HTTP response
 func Encode(w http.ResponseWriter, r *http.Request, status int, data interface{}) {
-	mediatype, _, err := mime.ParseMediaType(r.Header.Get("Accept"))
+	accept := r.Header.Get("Accept")
+
+	mediatype, _, err := mime.ParseMediaType(accept)
 	if err != nil {
-		//@TODO: error
+		log.Warn().Msgf("ParseMediaType failed: %s, using default type %s", accept, defaultMediatype)
+
+		mediatype = defaultMediatype
 	}
 
 	encoder, ok := encoders[mediatype]
@@ -28,8 +32,13 @@ func Encode(w http.ResponseWriter, r *http.Request, status int, data interface{}
 	}
 
 	if err := encoder.Encode(w, data); err != nil {
-		//@TODO: error
+		log.Error().Err(err).Msg("encode content failed")
+
+		status = http.StatusInternalServerError
+
+		//@TODO: write error response
 	}
 
+	w.Header().Set("Content-Type", encoder.MimeType()+";charset=utf-8")
 	w.WriteHeader(status)
 }
