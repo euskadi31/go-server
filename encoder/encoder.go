@@ -9,6 +9,7 @@ import (
 )
 
 // Encoder provider
+//go:generate mockery -case=underscore -inpkg -name=Encoder
 type Encoder interface {
 	MimeType() string
 	Encode(w http.ResponseWriter, data interface{}) error
