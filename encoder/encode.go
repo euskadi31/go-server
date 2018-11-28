@@ -5,9 +5,9 @@
 package encoder
 
 import (
-	"mime"
 	"net/http"
 
+	"github.com/golang/gddo/httputil"
 	"github.com/rs/zerolog/log"
 )
 
@@ -15,21 +15,15 @@ const defaultMediatype = "application/json"
 
 // Encode data to HTTP response
 func Encode(w http.ResponseWriter, r *http.Request, status int, data interface{}) {
-	accept := r.Header.Get("Accept")
+	offers := make([]string, 0, len(encoders))
 
-	mediatype, _, err := mime.ParseMediaType(accept)
-	if err != nil {
-		log.Warn().Msgf("ParseMediaType failed: %s, using default type %s", accept, defaultMediatype)
-
-		mediatype = defaultMediatype
+	for mime := range encoders {
+		offers = append(offers, mime)
 	}
 
-	encoder, ok := encoders[mediatype]
-	if !ok {
-		log.Warn().Msgf("invalid accept type %s, using default type %s", mediatype, defaultMediatype)
+	mediatype := httputil.NegotiateContentType(r, offers, defaultMediatype)
 
-		encoder = encoders[defaultMediatype]
-	}
+	encoder := encoders[mediatype]
 
 	if err := encoder.Encode(w, data); err != nil {
 		log.Error().Err(err).Msg("encode content failed")
