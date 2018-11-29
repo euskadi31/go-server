@@ -9,7 +9,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/euskadi31/go-server"
+	"github.com/euskadi31/go-server/response"
 	"github.com/rs/zerolog/log"
 )
 
@@ -30,7 +30,7 @@ func Handler(config *Configuration, provider Provider) func(http.Handler) http.H
 
 				log.Error().Msg("Access token invalid or expired")
 
-				server.FailureFromError(w, http.StatusUnauthorized, errors.New("Unauthorized"))
+				response.FailureFromError(w, http.StatusUnauthorized, errors.New("Unauthorized"))
 
 				return
 			}

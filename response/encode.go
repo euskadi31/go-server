@@ -2,16 +2,20 @@
 // Use of this source code is governed by a MIT
 // license that can be found in the LICENSE file.
 
-package encoder
+package response
 
 import (
 	"net/http"
 
+	"github.com/euskadi31/go-server/response/encoder"
 	"github.com/golang/gddo/httputil"
-	"github.com/rs/zerolog/log"
 )
 
 const defaultMediatype = "application/json"
+
+func init() {
+	Register(encoder.JSON())
+}
 
 // Encode data to HTTP response
 func Encode(w http.ResponseWriter, r *http.Request, status int, data interface{}) {
@@ -25,14 +29,13 @@ func Encode(w http.ResponseWriter, r *http.Request, status int, data interface{}
 
 	encoder := encoders[mediatype]
 
-	if err := encoder.Encode(w, data); err != nil {
-		log.Error().Err(err).Msg("encode content failed")
-
-		status = http.StatusInternalServerError
-
-		//@TODO: write error response
-	}
-
-	w.Header().Set("Content-Type", encoder.MimeType()+";charset=utf-8")
+	w.Header().Set("Content-Type", encoder.MimeType()+"; charset=utf-8")
+	w.Header().Set("X-Content-Type-Options", "nosniff")
 	w.WriteHeader(status)
+
+	if err := encoder.Encode(w, data); err != nil {
+		FailureFromError(w, http.StatusInternalServerError, err)
+
+		return
+	}
 }
