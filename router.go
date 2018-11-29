@@ -10,6 +10,7 @@ import (
 	"net/http/pprof"
 
 	"github.com/euskadi31/go-server/metrics"
+	"github.com/euskadi31/go-server/response"
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
@@ -48,13 +49,13 @@ func (r *Router) EnableHealthCheck() {
 func (r *Router) healthHandler(w http.ResponseWriter, req *http.Request) {
 	code := http.StatusOK
 
-	response := healthCheckProcessor(r.healthchecks)
+	resp := healthCheckProcessor(r.healthchecks)
 
-	if !response.Status {
+	if !resp.Status {
 		code = http.StatusServiceUnavailable
 	}
 
-	JSON(w, code, response)
+	response.Encode(w, req, code, resp)
 }
 
 // EnableMetrics endpoint

@@ -14,7 +14,7 @@ import (
 )
 
 func TestJSONEncoder(t *testing.T) {
-	encoder := JSONEncoder()
+	encoder := JSON()
 
 	assert.Equal(t, "application/json", encoder.MimeType())
 

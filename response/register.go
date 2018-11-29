@@ -2,15 +2,15 @@
 // Use of this source code is governed by a MIT
 // license that can be found in the LICENSE file.
 
-package encoder
+package response
 
-var encoders map[string]Encoder
+import (
+	"github.com/euskadi31/go-server/response/encoder"
+)
 
-func init() {
-	encoders = make(map[string]Encoder)
-}
+var encoders = map[string]encoder.Encoder{}
 
 // Register encoder provider
-func Register(encoder Encoder) {
+func Register(encoder encoder.Encoder) {
 	encoders[encoder.MimeType()] = encoder
 }

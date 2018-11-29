@@ -2,7 +2,7 @@
 // Use of this source code is governed by a MIT
 // license that can be found in the LICENSE file.
 
-package encoder
+package response
 
 import (
 	"errors"
@@ -13,11 +13,12 @@ import (
 
 	"github.com/stretchr/testify/mock"
 
+	"github.com/euskadi31/go-server/response/encoder"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestEncode(t *testing.T) {
-	Register(JSONEncoder())
+	Register(encoder.JSON())
 
 	req := httptest.NewRequest(http.MethodGet, "http://example.com/foo", nil)
 	req.Header.Set("Accept", "application/json")
@@ -31,12 +32,14 @@ func TestEncode(t *testing.T) {
 
 	assert.Equal(t, http.StatusOK, w.Code)
 	assert.Equal(t, "true\n", string(body))
+	assert.Equal(t, "nosniff", w.HeaderMap.Get("X-Content-Type-Options"))
+	assert.Equal(t, "application/json; charset=utf-8", w.HeaderMap.Get("Content-Type"))
 
-	encoders = make(map[string]Encoder)
+	encoders = make(map[string]encoder.Encoder)
 }
 
 func TestEncodeWithBadMimeType(t *testing.T) {
-	Register(JSONEncoder())
+	Register(encoder.JSON())
 
 	req := httptest.NewRequest(http.MethodGet, "http://example.com/foo", nil)
 	req.Header.Set("Accept", "application/xml")
@@ -51,11 +54,11 @@ func TestEncodeWithBadMimeType(t *testing.T) {
 	assert.Equal(t, http.StatusOK, w.Code)
 	assert.Equal(t, "true\n", string(body))
 
-	encoders = make(map[string]Encoder)
+	encoders = make(map[string]encoder.Encoder)
 }
 
 func TestEncodeWithError(t *testing.T) {
-	provider := &MockEncoder{}
+	provider := &encoder.MockEncoder{}
 
 	provider.On("MimeType").Return("application/json")
 	provider.On("Encode", mock.Anything, true).Return(errors.New("bad"))
@@ -69,11 +72,10 @@ func TestEncodeWithError(t *testing.T) {
 
 	Encode(w, req, http.StatusOK, true)
 
-	body, err := ioutil.ReadAll(w.Body)
-	assert.NoError(t, err)
-
 	assert.Equal(t, http.StatusInternalServerError, w.Code)
-	assert.Equal(t, "", string(body))
+	assert.JSONEq(t, `{"error":{"code":500,"message":"bad"}}`, w.Body.String())
+	assert.Equal(t, "nosniff", w.HeaderMap.Get("X-Content-Type-Options"))
+	assert.Equal(t, "application/json; charset=utf-8", w.HeaderMap.Get("Content-Type"))
 
-	encoders = make(map[string]Encoder)
+	encoders = make(map[string]encoder.Encoder)
 }

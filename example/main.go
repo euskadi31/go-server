@@ -9,6 +9,7 @@ import (
 	"net/http"
 
 	"github.com/euskadi31/go-server"
+	"github.com/euskadi31/go-server/response"
 )
 
 var userSchema = `{
@@ -51,19 +52,19 @@ func main() {
 		user := &User{}
 
 		if err := json.NewDecoder(r.Body).Decode(user); err != nil {
-			server.FailureFromError(w, http.StatusBadRequest, err)
+			response.FailureFromError(w, http.StatusBadRequest, err)
 
 			return
 		}
 
 		// Validate User struct by user schema
 		if result := validator.Validate("user", user); !result.IsValid() {
-			server.FailureFromValidator(w, result)
+			response.FailureFromValidator(w, result)
 
 			return
 		}
 
-		server.JSON(w, http.StatusCreated, user)
+		response.JSON(w, http.StatusCreated, user)
 	}).Methods(http.MethodPost)
 
 	if err := http.ListenAndServe(":1337", router); err != nil {
