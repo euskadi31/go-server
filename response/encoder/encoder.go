@@ -5,12 +5,12 @@
 package encoder
 
 import (
-	"net/http"
+	"io"
 )
 
 // Encoder provider
 //go:generate mockery -case=underscore -inpkg -name=Encoder
 type Encoder interface {
 	MimeType() string
-	Encode(w http.ResponseWriter, data interface{}) error
+	Encode(w io.Writer, data interface{}) error
 }

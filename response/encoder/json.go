@@ -6,7 +6,7 @@ package encoder
 
 import (
 	"encoding/json"
-	"net/http"
+	"io"
 )
 
 type jsonEncoder struct {
@@ -21,6 +21,6 @@ func (jsonEncoder) MimeType() string {
 	return "application/json"
 }
 
-func (jsonEncoder) Encode(w http.ResponseWriter, data interface{}) error {
+func (jsonEncoder) Encode(w io.Writer, data interface{}) error {
 	return json.NewEncoder(w).Encode(data)
 }
