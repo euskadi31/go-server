@@ -17,9 +17,9 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
-// ResponseStatus returns the HTTP response status.
+// StatusCode returns the HTTP response status.
 // Remember that the status is only set by the server after WriteHeader has been called.
-func ResponseStatus(w http.ResponseWriter) int {
+func StatusCode(w http.ResponseWriter) int {
 	return int(httpResponseStruct(reflect.ValueOf(w)).FieldByName("status").Int())
 }
 
@@ -90,17 +90,6 @@ func Failure(w http.ResponseWriter, status int, err ErrorMessage) {
 
 	if err := json.NewEncoder(w).Encode(body); err != nil {
 		log.Error().Err(err).Msg("")
-	}
-}
-
-// JSON response
-func JSON(w http.ResponseWriter, code int, body interface{}) {
-	w.Header().Set("Content-Type", "application/json; charset=utf-8")
-	w.Header().Set("X-Content-Type-Options", "nosniff")
-	w.WriteHeader(code)
-
-	if err := json.NewEncoder(w).Encode(body); err != nil {
-		FailureFromError(w, http.StatusInternalServerError, err)
 	}
 }
 
