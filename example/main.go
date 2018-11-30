@@ -34,7 +34,7 @@ var userSchema = `{
 	"additionalProperties": false
 }`
 
-type User struct {
+type user struct {
 	ID    int    `json:"id"`
 	Name  string `json:"name"`
 	Email string `json:"email"`
@@ -49,22 +49,22 @@ func main() {
 
 	router := server.NewRouter()
 	router.AddRouteFunc("/users", func(w http.ResponseWriter, r *http.Request) {
-		user := &User{}
+		u := &user{}
 
-		if err := json.NewDecoder(r.Body).Decode(user); err != nil {
+		if err := json.NewDecoder(r.Body).Decode(u); err != nil {
 			response.FailureFromError(w, http.StatusBadRequest, err)
 
 			return
 		}
 
 		// Validate User struct by user schema
-		if result := validator.Validate("user", user); !result.IsValid() {
+		if result := validator.Validate("user", u); !result.IsValid() {
 			response.FailureFromValidator(w, result)
 
 			return
 		}
 
-		response.Encode(w, r, http.StatusCreated, user)
+		response.Encode(w, r, http.StatusCreated, u)
 	}).Methods(http.MethodPost)
 
 	if err := http.ListenAndServe(":1337", router); err != nil {
