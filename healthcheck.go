@@ -47,7 +47,7 @@ func healthCheckProcessor(healthchecks map[string]HealthCheckHandler) HealthChec
 
 			response.Services[n] = s
 
-			if s == false {
+			if !s {
 				response.Status = false
 			}
 		}(name, handle)

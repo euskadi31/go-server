@@ -33,3 +33,6 @@ clean:
 
 generate:
 	@CGO_ENABLED=0 go generate ./...
+
+lint:
+	@golangci-lint run ./...

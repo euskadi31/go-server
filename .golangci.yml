@@ -1,0 +1,34 @@
+run:
+    concurrency: 4
+    deadline: 3m
+    issues-exit-code: 1
+    tests: false
+    skip-files:
+        - ".*_mock\\.go"
+        - "mock_.*\\.go"
+        - ".*/pkg/mod/.*$"
+
+output:
+    format: colored-line-number
+    print-issued-lines: true
+    print-linter-name: true
+
+linters-settings:
+    errcheck:
+        check-type-assertions: false
+        check-blank: false
+    govet:
+        check-shadowing: false
+    golint:
+        min-confidence: 0.8
+    gofmt:
+        simplify: true
+    gocyclo:
+        min-complexity: 18
+    maligned:
+        suggest-new: true
+    dupl:
+        threshold: 50
+    goconst:
+        min-len: 3
+        min-occurrences: 2
