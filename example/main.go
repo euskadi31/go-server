@@ -64,7 +64,7 @@ func main() {
 			return
 		}
 
-		response.JSON(w, http.StatusCreated, user)
+		response.Encode(w, r, http.StatusCreated, user)
 	}).Methods(http.MethodPost)
 
 	if err := http.ListenAndServe(":1337", router); err != nil {

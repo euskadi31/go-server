@@ -14,7 +14,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestResponseStatus(t *testing.T) {
+func TestStatusCode(t *testing.T) {
 	statusWant := http.StatusForbidden
 	var statusGot, customStatusGot int
 
@@ -24,8 +24,8 @@ func TestResponseStatus(t *testing.T) {
 
 	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
 		http.Error(w, http.StatusText(statusWant), statusWant)
-		statusGot = ResponseStatus(w)
-		customStatusGot = ResponseStatus(CustomResponseWriter{w})
+		statusGot = StatusCode(w)
+		customStatusGot = StatusCode(CustomResponseWriter{w})
 	}))
 	defer ts.Close()
 
@@ -42,31 +42,6 @@ func TestResponseStatus(t *testing.T) {
 	}
 }
 
-func TestJSON(t *testing.T) {
-	w := httptest.NewRecorder()
-
-	JSON(w, http.StatusCreated, map[string]string{
-		"foo": "bar",
-	})
-
-	assert.Equal(t, 201, w.Code)
-	assert.Equal(t, "application/json; charset=utf-8", w.HeaderMap.Get("Content-Type"))
-	assert.Equal(t, "nosniff", w.HeaderMap.Get("X-Content-Type-Options"))
-	assert.JSONEq(t, `{"foo":"bar"}`, w.Body.String())
-}
-
-func TestJSONFail(t *testing.T) {
-	w := &ResponseWriterFailMock{}
-
-	JSON(w, http.StatusCreated, map[string]string{
-		"foo": "bar",
-	})
-
-	assert.Equal(t, 201, w.Code)
-	assert.Equal(t, "application/json; charset=utf-8", w.HeaderMap.Get("Content-Type"))
-	assert.Equal(t, "nosniff", w.HeaderMap.Get("X-Content-Type-Options"))
-}
-
 func TestFailure(t *testing.T) {
 	w := httptest.NewRecorder()
 
@@ -76,8 +51,8 @@ func TestFailure(t *testing.T) {
 	})
 
 	assert.Equal(t, 500, w.Code)
-	assert.Equal(t, "application/json; charset=utf-8", w.HeaderMap.Get("Content-Type"))
-	assert.Equal(t, "nosniff", w.HeaderMap.Get("X-Content-Type-Options"))
+	assert.Equal(t, "application/json; charset=utf-8", w.Header().Get("Content-Type"))
+	assert.Equal(t, "nosniff", w.Header().Get("X-Content-Type-Options"))
 	assert.JSONEq(t, `{"error":{"code":1337,"message":"user_message"}}`, w.Body.String())
 }
 
@@ -87,8 +62,8 @@ func TestFailureFromError(t *testing.T) {
 	FailureFromError(w, http.StatusInternalServerError, errors.New("dev_message"))
 
 	assert.Equal(t, 500, w.Code)
-	assert.Equal(t, "application/json; charset=utf-8", w.HeaderMap.Get("Content-Type"))
-	assert.Equal(t, "nosniff", w.HeaderMap.Get("X-Content-Type-Options"))
+	assert.Equal(t, "application/json; charset=utf-8", w.Header().Get("Content-Type"))
+	assert.Equal(t, "nosniff", w.Header().Get("X-Content-Type-Options"))
 	assert.JSONEq(t, `{"error":{"code":500,"message":"dev_message"}}`, w.Body.String())
 }
 
@@ -99,8 +74,8 @@ func TestNotFoundFailure(t *testing.T) {
 	NotFoundFailure(w, req)
 
 	assert.Equal(t, 404, w.Code)
-	assert.Equal(t, "application/json; charset=utf-8", w.HeaderMap.Get("Content-Type"))
-	assert.Equal(t, "nosniff", w.HeaderMap.Get("X-Content-Type-Options"))
+	assert.Equal(t, "application/json; charset=utf-8", w.Header().Get("Content-Type"))
+	assert.Equal(t, "nosniff", w.Header().Get("X-Content-Type-Options"))
 	assert.JSONEq(t, `{"error":{"code":404,"message":"No route found for \"GET /users\""}}`, w.Body.String())
 }
 
