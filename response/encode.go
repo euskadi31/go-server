@@ -5,11 +5,19 @@
 package response
 
 import (
+	"bytes"
 	"net/http"
 
 	"github.com/euskadi31/go-server/response/encoder"
 	"github.com/golang/gddo/httputil"
+	"github.com/rs/zerolog/log"
 )
+
+// ResponseWriter interface for testing
+//go:generate mockery -case=underscore -inpkg -name=responseWriter
+type responseWriter interface {
+	http.ResponseWriter
+}
 
 const defaultMediatype = "application/json"
 
@@ -31,11 +39,17 @@ func Encode(w http.ResponseWriter, r *http.Request, status int, data interface{}
 
 	w.Header().Set("Content-Type", encoder.MimeType()+"; charset=utf-8")
 	w.Header().Set("X-Content-Type-Options", "nosniff")
-	w.WriteHeader(status)
 
-	if err := encoder.Encode(w, data); err != nil {
+	buffer := new(bytes.Buffer)
+
+	if err := encoder.Encode(buffer, data); err != nil {
 		FailureFromError(w, http.StatusInternalServerError, err)
 
 		return
+	}
+
+	w.WriteHeader(status)
+	if _, err := w.Write(buffer.Bytes()); err != nil {
+		log.Error().Err(err).Msg("cannot write buffer to response")
 	}
 }

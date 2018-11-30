@@ -290,7 +290,9 @@ type testNotFound struct {
 
 func (testNotFound) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusNotFound)
-	w.Write([]byte("true"))
+	if _, err := w.Write([]byte("true")); err != nil {
+		panic(err)
+	}
 }
 
 func TestRouterSetNotFound(t *testing.T) {
@@ -317,7 +319,9 @@ func TestRouterSetNotFoundFunc(t *testing.T) {
 	router := NewRouter()
 	router.SetNotFoundFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusNotFound)
-		w.Write([]byte("true"))
+		if _, err := w.Write([]byte("true")); err != nil {
+			panic(err)
+		}
 	})
 
 	router.ServeHTTP(w, req)
