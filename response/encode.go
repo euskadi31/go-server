@@ -14,7 +14,9 @@ import (
 )
 
 // ResponseWriter interface for testing
+// Hack for generate mock
 //go:generate mockery -case=underscore -inpkg -name=responseWriter
+// nolint: deadcode,megacheck
 type responseWriter interface {
 	http.ResponseWriter
 }
