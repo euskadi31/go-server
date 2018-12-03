@@ -9,6 +9,8 @@ import (
 	"fmt"
 	"net/http"
 	"reflect"
+	"strconv"
+	"time"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/validate"
@@ -55,6 +57,16 @@ func InternalServerFailure(w http.ResponseWriter, r *http.Request, p interface{}
 	Failure(w, http.StatusInternalServerError, ErrorMessage{
 		Code:    http.StatusInternalServerError,
 		Message: "Internal Server Error",
+	})
+}
+
+// ServiceUnavailableFailure response
+func ServiceUnavailableFailure(w http.ResponseWriter, retry time.Duration) {
+	w.Header().Set("Retry-After", strconv.FormatInt(int64(retry.Seconds()), 10))
+
+	Failure(w, http.StatusServiceUnavailable, ErrorMessage{
+		Code:    http.StatusServiceUnavailable,
+		Message: "Service Unavailable",
 	})
 }
 

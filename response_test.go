@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -101,4 +102,15 @@ func TestNotFoundFailure(t *testing.T) {
 	assert.Equal(t, "application/json; charset=utf-8", w.HeaderMap.Get("Content-Type"))
 	assert.Equal(t, "nosniff", w.HeaderMap.Get("X-Content-Type-Options"))
 	assert.JSONEq(t, `{"error":{"code":404,"message":"No route found for \"GET /users\""}}`, w.Body.String())
+}
+
+func TestServiceUnavailableFailure(t *testing.T) {
+	w := httptest.NewRecorder()
+
+	ServiceUnavailableFailure(w, 2*time.Minute)
+
+	assert.Equal(t, http.StatusServiceUnavailable, w.Code)
+	assert.Equal(t, "application/json; charset=utf-8", w.HeaderMap.Get("Content-Type"))
+	assert.Equal(t, "nosniff", w.HeaderMap.Get("X-Content-Type-Options"))
+	assert.Equal(t, "120", w.HeaderMap.Get("Retry-After"))
 }
