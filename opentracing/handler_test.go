@@ -30,6 +30,22 @@ func TestHandler(t *testing.T) {
 	middleware.ServeHTTP(w, req)
 }
 
+func TestHandlerOnRouter(t *testing.T) {
+	req := httptest.NewRequest("GET", "http://example.com/foo/123", nil)
+
+	tracer := mocktracer.New()
+
+	r := mux.NewRouter()
+	r.Use(Handler(tracer, IgnoreNone))
+	r.HandleFunc("/foo/{id}", func(w http.ResponseWriter, r *http.Request) {
+		assert.Equal(t, "GET /foo/{id}", routeRequestName(r))
+	}).Methods(http.MethodGet)
+
+	w := httptest.NewRecorder()
+
+	r.ServeHTTP(w, req)
+}
+
 func TestHandlerWithIgnore(t *testing.T) {
 	req := httptest.NewRequest("GET", "http://example.com/foo", nil)
 	w := httptest.NewRecorder()
@@ -85,4 +101,8 @@ func TestRouteRequestNameWithContext(t *testing.T) {
 	w := httptest.NewRecorder()
 
 	r.ServeHTTP(w, req)
+}
+
+func TestStatusCodeResult(t *testing.T) {
+	assert.Equal(t, "HTTP 2xx", statusCodeResult(http.StatusOK))
 }

@@ -39,7 +39,7 @@ func WrapRequest(ctx context.Context, req *http.Request) *http.Request {
 	// Add information on the peer service we're about to contact.
 	if host, portString, err := net.SplitHostPort(req.URL.Host); err == nil {
 		ext.PeerHostname.Set(span, host)
-		if port, err := strconv.Atoi(portString); err != nil {
+		if port, err := strconv.Atoi(portString); err == nil {
 			ext.PeerPort.Set(span, uint16(port))
 		}
 	} else {
