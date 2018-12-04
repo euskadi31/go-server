@@ -6,20 +6,21 @@ package locale
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 
 	"golang.org/x/text/language"
 )
 
 // DefaultLanguage var
-var DefaultLanguage = "fr"
+var DefaultLanguage = "en"
 
 // DefaultRegion var
-var DefaultRegion = "FR"
+var DefaultRegion = "US"
 
 // DefaultSupported language
 var DefaultSupported = []string{
-	DefaultLanguage, // fr: first language is fallback
+	DefaultLanguage, // en: first language is fallback
 }
 
 type key int
@@ -48,8 +49,11 @@ func HandlerWithConfig(languages []string) func(next http.Handler) http.Handler 
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			ctx := r.Context()
+			tags, q, err := language.ParseAcceptLanguage(r.Header.Get("Accept-Language"))
 
-			tag, _ := language.MatchStrings(matcher, r.Header.Get("Accept-Language"))
+			tag, _, _ := matcher.Match(tags...)
+
+			fmt.Printf("%17v (t: %6v; q: %3v; err: %v)\n", tag, tags, q, err)
 
 			region, _ := tag.Region()
 

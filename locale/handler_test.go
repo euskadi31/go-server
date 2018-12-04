@@ -21,21 +21,20 @@ func TestLocaleHandlerWithoutAcceptLanguage(t *testing.T) {
 	middleware := alice.New(Handler()).ThenFunc(func(w http.ResponseWriter, r *http.Request) {
 		locale := FromContext(r.Context())
 
-		assert.Equal(t, "fr", locale.Language)
+		assert.Equal(t, "en", locale.Language)
 	})
 
 	middleware.ServeHTTP(w, req)
 }
 
 func TestLocaleHandlerWithComplexAcceptLanguage(t *testing.T) {
-
 	req := httptest.NewRequest(http.MethodGet, "http://example.com/foo", nil)
 	w := httptest.NewRecorder()
 
 	middleware := alice.New(Handler()).ThenFunc(func(w http.ResponseWriter, r *http.Request) {
 		locale := FromContext(r.Context())
 
-		assert.Equal(t, "fr", locale.Language)
+		assert.Equal(t, "en", locale.Language)
 	})
 
 	req.Header.Set("Accept-Language", "fr-FR,fr;q=0.9,en-US;q=0.8,en;q=0.7")
@@ -44,14 +43,13 @@ func TestLocaleHandlerWithComplexAcceptLanguage(t *testing.T) {
 }
 
 func TestLocaleHandlerWithoutSupportedLanguage(t *testing.T) {
-
 	req := httptest.NewRequest(http.MethodGet, "http://example.com/foo", nil)
 	w := httptest.NewRecorder()
 
 	middleware := alice.New(Handler()).ThenFunc(func(w http.ResponseWriter, r *http.Request) {
 		locale := FromContext(r.Context())
 
-		assert.Equal(t, "fr", locale.Language)
+		assert.Equal(t, "en", locale.Language)
 	})
 
 	req.Header.Set("Accept-Language", "en-FR,fr;q=0.9,en-US;q=0.8,en;q=0.7")
@@ -60,18 +58,17 @@ func TestLocaleHandlerWithoutSupportedLanguage(t *testing.T) {
 }
 
 func TestLocaleHandlerWithConfig(t *testing.T) {
-
 	req := httptest.NewRequest(http.MethodGet, "http://example.com/foo", nil)
 	w := httptest.NewRecorder()
 
 	middleware := alice.New(HandlerWithConfig([]string{"fr", "en", "es", "it"})).ThenFunc(func(w http.ResponseWriter, r *http.Request) {
 		locale := FromContext(r.Context())
 
-		assert.Equal(t, "en", locale.Language)
-		assert.Equal(t, "US", locale.Region)
+		assert.Equal(t, "fr", locale.Language)
+		assert.Equal(t, "FR", locale.Region)
 	})
 
-	req.Header.Set("Accept-Language", "en-FR,en;q=0.9,en-US;q=0.8,en;q=0.7")
+	req.Header.Set("Accept-Language", "fr-FR,en;q=0.9,en-US;q=0.8,en;q=0.7")
 
 	middleware.ServeHTTP(w, req)
 }
@@ -85,12 +82,10 @@ func TestLocaleHandlerWithConfiAndAcceptLanguageMixed(t *testing.T) {
 		locale := FromContext(r.Context())
 
 		assert.Equal(t, "en", locale.Language)
-
-		//@BUG: expected FR, bug with language lib ?
 		assert.Equal(t, "US", locale.Region)
 	})
 
-	req.Header.Set("Accept-Language", "en-FR")
+	req.Header.Set("Accept-Language", "en-US")
 
 	middleware.ServeHTTP(w, req)
 }
@@ -134,8 +129,8 @@ func TestFromContext(t *testing.T) {
 
 	locale := FromContext(ctx)
 
-	assert.Equal(t, "fr", locale.Language)
-	assert.Equal(t, "FR", locale.Region)
+	assert.Equal(t, "en", locale.Language)
+	assert.Equal(t, "US", locale.Region)
 }
 
 func BenchmarkHandler(b *testing.B) {
