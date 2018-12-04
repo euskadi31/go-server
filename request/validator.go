@@ -12,6 +12,7 @@ import (
 	"os"
 	"path/filepath"
 	"reflect"
+	"strings"
 
 	"github.com/go-openapi/spec"
 	"github.com/go-openapi/strfmt"
@@ -19,6 +20,14 @@ import (
 	"github.com/go-yaml/yaml"
 	"github.com/rs/zerolog/log"
 )
+
+// ioReader interface for testing
+// Hack for generate mock
+//go:generate mockery -case=underscore -inpkg -name=ioReader
+// nolint: deadcode,megacheck
+type ioReader interface {
+	io.Reader
+}
 
 // ErrSchemaFileFormatNotSupported type
 type ErrSchemaFileFormatNotSupported struct {
@@ -82,7 +91,7 @@ func (v *Validator) AddSchemaFromFile(name string, filename string) error {
 		}
 	}()
 
-	return v.AddSchemaFromReader(name, filepath.Ext(filename), file)
+	return v.AddSchemaFromReader(name, strings.Trim(filepath.Ext(filename), "."), file)
 }
 
 // AddSchemaFromReader func
