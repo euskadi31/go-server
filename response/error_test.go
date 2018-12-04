@@ -19,3 +19,11 @@ func TestError(t *testing.T) {
 	assert.Equal(t, "foo", err.GetMessage())
 	assert.Equal(t, "foo", err.Error())
 }
+
+func TestValidatorError(t *testing.T) {
+	err := ValidatorError{
+		Message: "foo",
+	}
+
+	assert.Equal(t, "foo", err.Error())
+}

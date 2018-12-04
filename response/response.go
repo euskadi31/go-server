@@ -53,7 +53,7 @@ func MethodNotAllowedFailure(w http.ResponseWriter, r *http.Request) {
 }
 
 // InternalServerFailure response
-func InternalServerFailure(w http.ResponseWriter, r *http.Request, p interface{}) {
+func InternalServerFailure(w http.ResponseWriter) {
 	Failure(w, http.StatusInternalServerError, ErrorMessage{
 		Code:    http.StatusInternalServerError,
 		Message: "Internal Server Error",
@@ -89,7 +89,7 @@ func Failure(w http.ResponseWriter, status int, err ErrorMessage) {
 	}
 
 	if err := json.NewEncoder(w).Encode(body); err != nil {
-		log.Error().Err(err).Msg("")
+		log.Error().Err(err).Msg("json.NewEncoder().Encode() failed")
 	}
 }
 
@@ -114,13 +114,15 @@ func FailureFromValidator(w http.ResponseWriter, result *validate.Result) {
 				Values:  errValidator.Values,
 			}
 		} else {
-			item = err
+			item = ValidatorError{
+				Message: err.Error(),
+			}
 		}
 
 		body.Errors = append(body.Errors, item)
 	}
 
 	if err := json.NewEncoder(w).Encode(body); err != nil {
-		log.Error().Err(err).Msg("")
+		log.Error().Err(err).Msg("json.NewEncoder().Encode() failed")
 	}
 }

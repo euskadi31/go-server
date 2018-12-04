@@ -11,10 +11,9 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/stretchr/testify/mock"
-
 	"github.com/euskadi31/go-server/response/encoder"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/mock"
 )
 
 func TestEncode(t *testing.T) {
