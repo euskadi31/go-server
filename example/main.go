@@ -9,6 +9,7 @@ import (
 	"net/http"
 
 	"github.com/euskadi31/go-server"
+	"github.com/euskadi31/go-server/request"
 	"github.com/euskadi31/go-server/response"
 )
 
@@ -41,7 +42,7 @@ type user struct {
 }
 
 func main() {
-	validator := server.NewValidator()
+	validator := request.NewValidator()
 
 	if err := validator.AddSchemaFromJSON("user", []byte(userSchema)); err != nil {
 		panic(err)
