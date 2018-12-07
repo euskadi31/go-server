@@ -6,9 +6,9 @@ package locale
 
 import (
 	"context"
-	"fmt"
 	"net/http"
 
+	"github.com/rs/zerolog/log"
 	"golang.org/x/text/language"
 )
 
@@ -49,17 +49,20 @@ func HandlerWithConfig(languages []string) func(next http.Handler) http.Handler 
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			ctx := r.Context()
-			tags, q, err := language.ParseAcceptLanguage(r.Header.Get("Accept-Language"))
+			locale := Locale{}
 
-			tag, _, _ := matcher.Match(tags...)
+			tags, _, err := language.ParseAcceptLanguage(r.Header.Get("Accept-Language"))
+			if err != nil {
+				log.Error().Err(err).Msg("language.ParseAcceptLanguage failed")
 
-			fmt.Printf("%17v (t: %6v; q: %3v; err: %v)\n", tag, tags, q, err)
+				locale.Language = DefaultLanguage
+				locale.Region = DefaultRegion
+			} else {
+				tag, _, _ := matcher.Match(tags...)
+				region, _ := tag.Region()
 
-			region, _ := tag.Region()
-
-			locale := Locale{
-				Language: tag.String(),
-				Region:   region.String(),
+				locale.Language = tag.String()
+				locale.Region = region.String()
 			}
 
 			ctx = ToContext(ctx, locale)
