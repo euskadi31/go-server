@@ -6,18 +6,14 @@ package server
 
 import (
 	"context"
+	"errors"
 	"net/http"
 
 	"github.com/rs/zerolog/log"
 )
 
-// Server interface
-type Server interface {
-	Run() error
-	Shutdown() error
-}
-
-type server struct {
+// Server struct
+type Server struct {
 	*Router
 	cfg         *Configuration
 	httpServer  *http.Server
@@ -25,14 +21,14 @@ type server struct {
 }
 
 // New Server
-func New(cfg *Configuration) Server {
-	return &server{
+func New(cfg *Configuration) *Server {
+	return &Server{
 		Router: NewRouter(),
 		cfg:    cfg,
 	}
 }
 
-func (s *server) runHTTPServer() error {
+func (s *Server) runHTTPServer() error {
 	addr := s.cfg.HTTP.Addr()
 
 	log.Info().Msgf("HTTP Server running on %s", addr)
@@ -49,7 +45,7 @@ func (s *server) runHTTPServer() error {
 	return s.httpServer.ListenAndServe()
 }
 
-func (s *server) runHTTPSServer() error {
+func (s *Server) runHTTPSServer() error {
 	addr := s.cfg.HTTPS.Addr()
 
 	log.Info().Msgf("HTTPS Server running on %s", addr)
@@ -67,7 +63,12 @@ func (s *server) runHTTPSServer() error {
 	return s.httpsServer.ListenAndServeTLS(s.cfg.HTTPS.CertFile, s.cfg.HTTPS.KeyFile)
 }
 
-func (s *server) Run() (err error) {
+// Run Server
+func (s *Server) Run() (err error) {
+	if !s.cfg.IsEnabled("http") && !s.cfg.IsEnabled("https") {
+		return errors.New("http or https server is not configured")
+	}
+
 	s.Router.EnableRecovery()
 
 	if s.cfg.HealthCheck {
@@ -104,15 +105,16 @@ func (s *server) Run() (err error) {
 	return nil
 }
 
-func (s *server) Shutdown() error {
+// Shutdown server
+func (s *Server) Shutdown() (err error) {
 	if s.httpServer != nil {
 		log.Info().Msg("Shutting down HTTP server...")
 
 		ctx, cancel := context.WithTimeout(context.Background(), s.cfg.ShutdownTimeout)
 		defer cancel()
 
-		if err := s.httpServer.Shutdown(ctx); err != nil {
-			return err
+		if e := s.httpServer.Shutdown(ctx); err != nil {
+			err = e
 		}
 	}
 
@@ -122,10 +124,10 @@ func (s *server) Shutdown() error {
 		ctx, cancel := context.WithTimeout(context.Background(), s.cfg.ShutdownTimeout)
 		defer cancel()
 
-		if err := s.httpsServer.Shutdown(ctx); err != nil {
-			return err
+		if e := s.httpsServer.Shutdown(ctx); err != nil {
+			err = e
 		}
 	}
 
-	return nil
+	return
 }
