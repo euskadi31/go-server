@@ -1,5 +1,6 @@
 .DS_Store
 *.out
+*.out.tmp
 
 vendor/
 example/example
