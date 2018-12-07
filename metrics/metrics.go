@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/prometheus/client_golang/prometheus"
+	"github.com/rs/zerolog/log"
 	"github.com/zenazn/goji/web/mutil"
 )
 
@@ -23,7 +24,9 @@ func Handler() func(http.Handler) http.Handler {
 		},
 	)
 
-	prometheus.MustRegister(duration)
+	if err := prometheus.Register(duration); err != nil {
+		log.Debug().Err(err).Msg("prometheus register duration")
+	}
 
 	request := prometheus.NewCounterVec(
 		prometheus.CounterOpts{
@@ -33,7 +36,9 @@ func Handler() func(http.Handler) http.Handler {
 		[]string{"status", "method"},
 	)
 
-	prometheus.MustRegister(request)
+	if err := prometheus.Register(request); err != nil {
+		log.Debug().Err(err).Msg("prometheus register request")
+	}
 
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
