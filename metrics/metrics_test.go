@@ -17,6 +17,8 @@ func TestHandler(t *testing.T) {
 	req := httptest.NewRequest(http.MethodGet, "http://example.com/foo", nil)
 	w := httptest.NewRecorder()
 
+	_ = Handler()
+
 	middleware := alice.New(Handler()).ThenFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
 	})
