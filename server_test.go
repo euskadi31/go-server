@@ -49,7 +49,7 @@ func TestServerHTTP(t *testing.T) {
 		assert.NoError(t, err)
 	}()
 
-	time.Sleep(1 * time.Second)
+	time.Sleep(500 * time.Millisecond)
 
 	resp, err := http.Get("http://localhost:12456/")
 	assert.NoError(t, err)
@@ -84,7 +84,7 @@ func TestServerHTTPS(t *testing.T) {
 		assert.NoError(t, err)
 	}()
 
-	time.Sleep(1 * time.Second)
+	time.Sleep(500 * time.Millisecond)
 
 	client := httpClient()
 
@@ -124,7 +124,7 @@ func TestServerHTTPAndHTTPS(t *testing.T) {
 		assert.NoError(t, err)
 	}()
 
-	time.Sleep(1 * time.Second)
+	time.Sleep(500 * time.Millisecond)
 
 	client := httpClient()
 
