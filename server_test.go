@@ -8,7 +8,7 @@ import (
 	"crypto/tls"
 	"net/http"
 	"testing"
-	//"time"
+	"time"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -49,10 +49,7 @@ func TestServerHTTP(t *testing.T) {
 		assert.NoError(t, err)
 	}()
 
-	defer func() {
-		err := s.Shutdown()
-		assert.NoError(t, err)
-	}()
+	time.Sleep(1 * time.Second)
 
 	resp, err := http.Get("http://localhost:12456/")
 	assert.NoError(t, err)
@@ -61,6 +58,9 @@ func TestServerHTTP(t *testing.T) {
 	resp, err = http.Get("http://localhost:12456/health")
 	assert.NoError(t, err)
 	assert.Equal(t, http.StatusOK, resp.StatusCode)
+
+	err = s.Shutdown()
+	assert.NoError(t, err)
 }
 
 func TestServerHTTPS(t *testing.T) {
@@ -84,10 +84,7 @@ func TestServerHTTPS(t *testing.T) {
 		assert.NoError(t, err)
 	}()
 
-	defer func() {
-		err := s.Shutdown()
-		assert.NoError(t, err)
-	}()
+	time.Sleep(1 * time.Second)
 
 	client := httpClient()
 
@@ -98,6 +95,9 @@ func TestServerHTTPS(t *testing.T) {
 	resp, err = client.Get("https://localhost:12457/health")
 	assert.NoError(t, err)
 	assert.Equal(t, http.StatusOK, resp.StatusCode)
+
+	err = s.Shutdown()
+	assert.NoError(t, err)
 }
 
 func TestServerHTTPAndHTTPS(t *testing.T) {
@@ -124,10 +124,7 @@ func TestServerHTTPAndHTTPS(t *testing.T) {
 		assert.NoError(t, err)
 	}()
 
-	defer func() {
-		err := s.Shutdown()
-		assert.NoError(t, err)
-	}()
+	time.Sleep(1 * time.Second)
 
 	client := httpClient()
 
@@ -142,4 +139,7 @@ func TestServerHTTPAndHTTPS(t *testing.T) {
 	resp, err = client.Get("https://localhost:12457/health")
 	assert.NoError(t, err)
 	assert.Equal(t, http.StatusOK, resp.StatusCode)
+
+	err = s.Shutdown()
+	assert.NoError(t, err)
 }
