@@ -42,6 +42,21 @@ func TestLocaleHandlerWithComplexAcceptLanguage(t *testing.T) {
 	middleware.ServeHTTP(w, req)
 }
 
+func TestLocaleHandlerWithBadAcceptLanguage(t *testing.T) {
+	req := httptest.NewRequest(http.MethodGet, "http://example.com/foo", nil)
+	w := httptest.NewRecorder()
+
+	middleware := alice.New(Handler()).ThenFunc(func(w http.ResponseWriter, r *http.Request) {
+		locale := FromContext(r.Context())
+
+		assert.Equal(t, "en", locale.Language)
+	})
+
+	req.Header.Set("Accept-Language", "bad!")
+
+	middleware.ServeHTTP(w, req)
+}
+
 func TestLocaleHandlerWithoutSupportedLanguage(t *testing.T) {
 	req := httptest.NewRequest(http.MethodGet, "http://example.com/foo", nil)
 	w := httptest.NewRecorder()
