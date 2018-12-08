@@ -331,3 +331,19 @@ func TestRouterSetNotFoundFunc(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Equal(t, "true", string(b))
 }
+
+func BenchmarkRouter(b *testing.B) {
+	req := httptest.NewRequest(http.MethodGet, "http://example.com/route-func", nil)
+
+	router := NewRouter()
+
+	router.AddRouteFunc("/route-func", func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusNoContent)
+	})
+
+	for n := 0; n < b.N; n++ {
+		w := httptest.NewRecorder()
+
+		router.ServeHTTP(w, req)
+	}
+}
