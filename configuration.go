@@ -11,6 +11,7 @@ import (
 	"time"
 )
 
+// see https://blog.cloudflare.com/exposing-go-on-the-internet/
 var (
 	// DefaultCurvePreferences defines the recommended elliptic curves for modern TLS
 	DefaultCurvePreferences = []tls.CurveID{
