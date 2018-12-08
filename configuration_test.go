@@ -51,3 +51,17 @@ func TestHTTPSConfigurationAddr(t *testing.T) {
 
 	assert.Equal(t, "127.0.0.1:8080", c.Addr())
 }
+
+func TestConfigurationWithDefault(t *testing.T) {
+
+	cfg := ConfigurationWithDefault(nil)
+
+	assert.Equal(t, DefaultIdleTimeout, cfg.IdleTimeout)
+	assert.Equal(t, DefaultReadTimeout, cfg.ReadTimeout)
+	assert.Equal(t, DefaultShutdownTimeout, cfg.ShutdownTimeout)
+	assert.Equal(t, DefaultWriteTimeout, cfg.WriteTimeout)
+	assert.NotNil(t, cfg.HTTPS)
+	assert.NotNil(t, cfg.HTTPS.TLSConfig)
+	assert.True(t, cfg.HTTPS.TLSConfig.PreferServerCipherSuites)
+	assert.Equal(t, DefaultMinVersion, cfg.HTTPS.TLSConfig.MinVersion)
+}
