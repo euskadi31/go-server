@@ -143,3 +143,57 @@ func TestServerHTTPAndHTTPS(t *testing.T) {
 	err = s.Shutdown()
 	assert.NoError(t, err)
 }
+
+func BenchmarkServerHTTP(b *testing.B) {
+	s := New(&Configuration{
+		HTTPS: &HTTPSConfiguration{
+			Port:     12457,
+			CertFile: "./testdata/server.crt",
+			KeyFile:  "./testdata/server.key",
+		},
+		HealthCheck: true,
+	})
+
+	s.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+	}).Methods(http.MethodGet)
+
+	go func() {
+		err := s.Run()
+		assert.NoError(b, err)
+	}()
+
+	client := httpClient()
+
+	for n := 0; n < b.N; n++ {
+		_, _ = client.Get("https://localhost:12457/")
+	}
+
+	err := s.Shutdown()
+	assert.NoError(b, err)
+}
+
+func BenchmarkServerHTTPS(b *testing.B) {
+	s := New(&Configuration{
+		HTTP: &HTTPConfiguration{
+			Port: 12456,
+		},
+		HealthCheck: true,
+	})
+
+	s.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+	}).Methods(http.MethodGet)
+
+	go func() {
+		err := s.Run()
+		assert.NoError(b, err)
+	}()
+
+	for n := 0; n < b.N; n++ {
+		_, _ = http.Get("http://localhost:12456/")
+	}
+
+	err := s.Shutdown()
+	assert.NoError(b, err)
+}

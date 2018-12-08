@@ -9,9 +9,9 @@ import (
 	"errors"
 	"testing"
 
-	"github.com/stretchr/testify/mock"
-
+	"github.com/go-openapi/spec"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/mock"
 )
 
 func TestErrSchemaFileFormatNotSupported(t *testing.T) {
@@ -115,4 +115,30 @@ func TestValidatorAddSchemaFromYMLWithBadYML(t *testing.T) {
 
 	err := v.AddSchemaFromYAML("test", []byte(`{`))
 	assert.Error(t, err)
+}
+
+func TestValidatorAddSchemFromObject(t *testing.T) {
+	schemaMock := &MockSchemaValidator{}
+
+	schemaMock.On("SchemaValidator").Return(&spec.Schema{})
+
+	v := NewValidator()
+
+	err := v.AddSchemFromObject(schemaMock)
+	assert.NoError(t, err)
+}
+
+func BenchmarkValidator(b *testing.B) {
+	v := NewValidator()
+
+	err := v.AddSchemaFromFile("test", "testdata/test.yml")
+	assert.NoError(b, err)
+
+	req := map[string]interface{}{
+		"name": "foo",
+	}
+
+	for n := 0; n < b.N; n++ {
+		_ = v.Validate("test", req)
+	}
 }

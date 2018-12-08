@@ -62,6 +62,7 @@ func (e *ErrSchemaNotFound) Error() string {
 }
 
 // SchemaValidator interface experimental
+//go:generate mockery -case=underscore -inpkg -name=SchemaValidator
 type SchemaValidator interface {
 	SchemaValidator() *spec.Schema
 }

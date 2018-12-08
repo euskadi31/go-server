@@ -27,6 +27,9 @@ cover: coverage.out
 cover-html: coverage.out
 	@go tool cover -html=./coverage.out
 
+benchmark:
+	@go test -bench=. ./...
+
 clean:
 	@rm ./coverage.out
 	@go clean -i ./...
