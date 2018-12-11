@@ -1,4 +1,4 @@
-Go Server ![Last release](https://img.shields.io/github/release/euskadi31/go-server.svg)
+Go Server [![Last release](https://img.shields.io/github/release/euskadi31/go-server.svg)](https://github.com/euskadi31/go-server/releases/latest) [![Documentation](https://godoc.org/github.com/euskadi31/go-server?status.svg)](https://godoc.org/github.com/euskadi31/go-server)
 =========
 
 [![Go Report Card](https://goreportcard.com/badge/github.com/euskadi31/go-server)](https://goreportcard.com/report/github.com/euskadi31/go-server)
@@ -6,7 +6,6 @@ Go Server ![Last release](https://img.shields.io/github/release/euskadi31/go-ser
 | Branch  | Status | Coverage |
 |---------|--------|----------|
 | master  | [![Build Status](https://img.shields.io/travis/euskadi31/go-server/master.svg)](https://travis-ci.org/euskadi31/go-server) | [![Coveralls](https://img.shields.io/coveralls/euskadi31/go-server/master.svg)](https://coveralls.io/github/euskadi31/go-server?branch=master) |
-| develop | [![Build Status](https://img.shields.io/travis/euskadi31/go-server/develop.svg)](https://travis-ci.org/euskadi31/go-server) | [![Coveralls](https://img.shields.io/coveralls/euskadi31/go-server/develop.svg)](https://coveralls.io/github/euskadi31/go-server?branch=develop) |
 
 HTTP Server Router with middleware
 
@@ -30,7 +29,6 @@ router.AddController(MyController())
 panic(http.ListenAndServe(":1337", router))
 
 ```
-
 
 ## License
 
