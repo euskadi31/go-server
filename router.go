@@ -43,7 +43,7 @@ func (r *Router) AddHealthCheck(name string, handle HealthCheckHandler) error {
 
 // EnableHealthCheck endpoint
 func (r *Router) EnableHealthCheck() {
-	r.AddRouteFunc("/health", r.healthHandler).Methods(http.MethodGet, "HEAD")
+	r.HandleFunc("/health", r.healthHandler).Methods(http.MethodGet, http.MethodHead)
 }
 
 func (r *Router) healthHandler(w http.ResponseWriter, req *http.Request) {

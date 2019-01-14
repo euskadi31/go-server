@@ -9,3 +9,7 @@ type Locale struct {
 	Language string
 	Region   string
 }
+
+func (l Locale) String() string {
+	return l.Language + "-" + l.Region
+}

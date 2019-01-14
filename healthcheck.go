@@ -31,7 +31,7 @@ type HealthCheckResponse struct {
 func healthCheckProcessor(healthchecks map[string]HealthCheckHandler) HealthCheckResponse {
 	response := HealthCheckResponse{
 		Status:   true,
-		Services: make(map[string]bool),
+		Services: make(map[string]bool, len(healthchecks)),
 	}
 
 	var wg = &sync.WaitGroup{}
