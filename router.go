@@ -136,10 +136,10 @@ func (r *Router) AddPrefixRouteFunc(prefix string, handler http.HandlerFunc) *mu
 
 // SetNotFound handler
 func (r *Router) SetNotFound(handler http.Handler) {
-	r.NotFoundHandler = handler
+	r.Router.NotFoundHandler = handler
 }
 
 // SetNotFoundFunc handler
 func (r *Router) SetNotFoundFunc(handler http.HandlerFunc) {
-	r.NotFoundHandler = handler
+	r.Router.NotFoundHandler = handler
 }
