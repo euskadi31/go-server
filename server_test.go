@@ -144,6 +144,44 @@ func TestServerHTTPAndHTTPS(t *testing.T) {
 	assert.NoError(t, err)
 }
 
+func TestServerSetNotFoundFunc(t *testing.T) {
+	s := New(&Configuration{
+		HTTP: &HTTPConfiguration{
+			Port: 12456,
+		},
+		HTTPS: &HTTPSConfiguration{
+			Port:     12457,
+			CertFile: "./testdata/server.crt",
+			KeyFile:  "./testdata/server.key",
+		},
+		Profiling:   true,
+		Metrics:     true,
+		HealthCheck: true,
+	})
+	s.SetNotFoundFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusNotFound)
+		if _, err := w.Write([]byte("true")); err != nil {
+			panic(err)
+		}
+	})
+
+	go func() {
+		err := s.Run()
+		assert.NoError(t, err)
+	}()
+
+	time.Sleep(500 * time.Millisecond)
+
+	client := httpClient()
+
+	resp, err := client.Get("http://localhost:12456/route-func/foo")
+	assert.NoError(t, err)
+	assert.Equal(t, http.StatusNotFound, resp.StatusCode)
+
+	err = s.Shutdown()
+	assert.NoError(t, err)
+}
+
 func BenchmarkServerHTTP(b *testing.B) {
 	s := New(&Configuration{
 		HTTPS: &HTTPSConfiguration{
