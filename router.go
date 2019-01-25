@@ -14,6 +14,7 @@ import (
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
+	"github.com/rs/cors"
 )
 
 // Router struct
@@ -67,9 +68,9 @@ func (r *Router) EnableMetrics() {
 
 // EnableCors for all endpoint
 func (r *Router) EnableCors() {
-	r.EnableCorsWithOptions(handlers.AllowedOrigins([]string{
-		"*",
-	}))
+	r.EnableCorsWithOptions(cors.Options{
+		AllowedOrigins: []string{"*"},
+	})
 }
 
 // EnableProxy for populating r.RemoteAddr and r.URL.Scheme based on the X-Forwarded-For,
@@ -101,8 +102,14 @@ func (r *Router) EnableRecovery() {
 }
 
 // EnableCorsWithOptions for all endpoint
-func (r *Router) EnableCorsWithOptions(opts ...handlers.CORSOption) {
-	r.Use(handlers.CORS(opts...))
+func (r *Router) EnableCorsWithOptions(options cors.Options) {
+	c := cors.New(options)
+
+	r.Use(c.Handler)
+
+	r.MethodNotAllowedHandler = c.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+
+	}))
 }
 
 // AddController to Router

@@ -74,11 +74,6 @@ func TestRouterHealthCheckFailed(t *testing.T) {
 }
 
 func TestRouterEnableCors(t *testing.T) {
-	req := httptest.NewRequest(http.MethodGet, "http://example.com/", nil)
-	req.Header.Add("Origin", "http://localhost")
-
-	w := httptest.NewRecorder()
-
 	router := NewRouter()
 
 	router.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
@@ -87,10 +82,24 @@ func TestRouterEnableCors(t *testing.T) {
 
 	router.EnableCors()
 
+	req := httptest.NewRequest(http.MethodGet, "http://example.com/", nil)
+	req.Header.Add("Origin", "http://localhost")
+
+	w := httptest.NewRecorder()
+
 	router.ServeHTTP(w, req)
 
 	assert.Equal(t, http.StatusOK, w.Code)
 	assert.Equal(t, "*", w.Header().Get("Access-Control-Allow-Origin"))
+
+	req = httptest.NewRequest(http.MethodOptions, "http://example.com/", nil)
+	req.Header.Add("Origin", "http://localhost")
+
+	w = httptest.NewRecorder()
+
+	router.ServeHTTP(w, req)
+
+	assert.Equal(t, http.StatusOK, w.Code)
 }
 
 func TestRouterEnableProxy(t *testing.T) {
