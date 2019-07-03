@@ -26,7 +26,7 @@ require (
 	github.com/mitchellh/mapstructure v0.0.0-20171017171808-06020f85339e // indirect
 	github.com/opentracing/opentracing-go v1.1.0
 	github.com/pborman/uuid v1.2.0 // indirect
-	github.com/prometheus/client_golang v0.9.2
+	github.com/prometheus/client_golang v0.9.4
 	github.com/rs/cors v1.6.0
 	github.com/rs/zerolog v1.14.3
 	github.com/stretchr/objx v0.1.1 // indirect
