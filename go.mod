@@ -17,10 +17,9 @@ require (
 	github.com/go-yaml/yaml v2.1.0+incompatible
 	github.com/golang/gddo v0.0.0-20181116215533-9bd4a3295021
 	github.com/google/go-cmp v0.2.0 // indirect
-	github.com/gorilla/context v1.1.1 // indirect
 	github.com/gorilla/handlers v1.4.2
 	github.com/gorilla/mux v1.7.3
-	github.com/justinas/alice v0.0.0-20160910103822-03f45bd4b7da
+	github.com/justinas/alice v0.0.0-20171023064455-03f45bd4b7da
 	github.com/kr/pretty v0.1.0 // indirect
 	github.com/mailru/easyjson v0.0.0-20171120080333-32fa128f234d // indirect
 	github.com/mitchellh/mapstructure v0.0.0-20171017171808-06020f85339e // indirect
@@ -29,11 +28,11 @@ require (
 	github.com/prometheus/client_golang v0.9.4
 	github.com/rs/cors v1.7.0
 	github.com/rs/zerolog v1.15.0
-	github.com/stretchr/objx v0.1.1 // indirect
 	github.com/stretchr/testify v1.4.0
 	github.com/zenazn/goji v0.9.0
-	golang.org/x/text v0.0.0-20171227012246-e19ae1496984
+	golang.org/x/text v0.3.0
 	gopkg.in/check.v1 v1.0.0-20180628173108-788fd7840127 // indirect
 	gopkg.in/mgo.v2 v2.0.0-20160818020120-3f83fa500528 // indirect
-	gopkg.in/yaml.v2 v2.0.0 // indirect
 )
+
+go 1.12
