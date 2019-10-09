@@ -59,9 +59,10 @@ func HandlerWithConfig(languages []string) func(next http.Handler) http.Handler 
 				locale.Region = DefaultRegion
 			} else {
 				tag, _, _ := matcher.Match(tags...)
+				language, _ := tag.Base()
 				region, _ := tag.Region()
 
-				locale.Language = tag.String()
+				locale.Language = language.String()
 				locale.Region = region.String()
 			}
 
