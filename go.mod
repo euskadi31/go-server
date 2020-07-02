@@ -23,7 +23,7 @@ require (
 	github.com/kr/pretty v0.1.0 // indirect
 	github.com/mailru/easyjson v0.0.0-20171120080333-32fa128f234d // indirect
 	github.com/mitchellh/mapstructure v0.0.0-20171017171808-06020f85339e // indirect
-	github.com/opentracing/opentracing-go v1.1.0
+	github.com/opentracing/opentracing-go v1.2.0
 	github.com/pborman/uuid v1.2.0 // indirect
 	github.com/prometheus/client_golang v0.9.4
 	github.com/rs/cors v1.7.0
