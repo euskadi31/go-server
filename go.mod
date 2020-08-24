@@ -18,7 +18,7 @@ require (
 	github.com/golang/gddo v0.0.0-20181116215533-9bd4a3295021
 	github.com/google/go-cmp v0.2.0 // indirect
 	github.com/gorilla/handlers v1.4.2
-	github.com/gorilla/mux v1.7.4
+	github.com/gorilla/mux v1.8.0
 	github.com/justinas/alice v0.0.0-20171023064455-03f45bd4b7da
 	github.com/kr/pretty v0.1.0 // indirect
 	github.com/mailru/easyjson v0.0.0-20171120080333-32fa128f234d // indirect
