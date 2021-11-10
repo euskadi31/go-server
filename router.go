@@ -98,7 +98,7 @@ func (r *Router) EnableProfiling() {
 
 // EnableRecovery for all endpoint
 func (r *Router) EnableRecovery() {
-	r.Use(handlers.RecoveryHandler())
+	r.Use(handlers.RecoveryHandler(handlers.PrintRecoveryStack(true)))
 }
 
 // EnableCorsWithOptions for all endpoint
