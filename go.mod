@@ -27,7 +27,7 @@ require (
 	github.com/pborman/uuid v1.2.0 // indirect
 	github.com/prometheus/client_golang v0.9.4
 	github.com/rs/cors v1.8.0
-	github.com/rs/zerolog v1.26.0
+	github.com/rs/zerolog v1.26.1
 	github.com/stretchr/testify v1.7.0
 	github.com/zenazn/goji v0.9.0
 	golang.org/x/text v0.3.7
