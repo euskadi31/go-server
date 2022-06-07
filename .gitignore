@@ -2,6 +2,7 @@
 *.out
 *.out.tmp
 
+.vscode/
 vendor/
 example/example
 
