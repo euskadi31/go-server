@@ -29,7 +29,7 @@ require (
 	github.com/prometheus/client_golang v0.9.4
 	github.com/rs/cors v1.8.2
 	github.com/rs/zerolog v1.26.1
-	github.com/stretchr/testify v1.7.2
+	github.com/stretchr/testify v1.7.4
 	github.com/zenazn/goji v1.0.1
 	golang.org/x/text v0.3.7
 	gopkg.in/check.v1 v1.0.0-20180628173108-788fd7840127 // indirect
