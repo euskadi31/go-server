@@ -16,25 +16,20 @@ require (
 	github.com/go-openapi/validate v0.0.0-20180110180619-fa47bbf926a7
 	github.com/go-yaml/yaml v2.1.0+incompatible
 	github.com/golang/gddo v0.0.0-20181116215533-9bd4a3295021
-	github.com/golang/protobuf v1.3.2 // indirect
-	github.com/google/go-cmp v0.2.0 // indirect
 	github.com/gorilla/handlers v1.5.1
 	github.com/gorilla/mux v1.8.0
 	github.com/justinas/alice v1.2.0
-	github.com/kr/pretty v0.1.0 // indirect
 	github.com/mailru/easyjson v0.0.0-20171120080333-32fa128f234d // indirect
 	github.com/mitchellh/mapstructure v0.0.0-20171017171808-06020f85339e // indirect
 	github.com/opentracing/opentracing-go v1.2.0
 	github.com/pborman/uuid v1.2.0 // indirect
-	github.com/prometheus/client_golang v0.9.4
+	github.com/prometheus/client_golang v1.13.0
 	github.com/rs/cors v1.8.2
 	github.com/rs/zerolog v1.28.0
 	github.com/stretchr/testify v1.8.1
 	github.com/zenazn/goji v1.0.1
 	golang.org/x/text v0.4.0
-	gopkg.in/check.v1 v1.0.0-20180628173108-788fd7840127 // indirect
 	gopkg.in/mgo.v2 v2.0.0-20160818020120-3f83fa500528 // indirect
-	gopkg.in/yaml.v2 v2.2.2 // indirect
 )
 
 go 1.12
