@@ -27,7 +27,7 @@ require (
 	github.com/opentracing/opentracing-go v1.2.0
 	github.com/pborman/uuid v1.2.0 // indirect
 	github.com/prometheus/client_golang v0.9.4
-	github.com/rs/cors v1.10.0
+	github.com/rs/cors v1.10.1
 	github.com/rs/zerolog v1.31.0
 	github.com/stretchr/testify v1.8.4
 	github.com/zenazn/goji v1.0.1
