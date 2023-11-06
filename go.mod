@@ -18,7 +18,7 @@ require (
 	github.com/golang/gddo v0.0.0-20181116215533-9bd4a3295021
 	github.com/golang/protobuf v1.3.2 // indirect
 	github.com/google/go-cmp v0.2.0 // indirect
-	github.com/gorilla/handlers v1.5.1
+	github.com/gorilla/handlers v1.5.2
 	github.com/gorilla/mux v1.8.0
 	github.com/justinas/alice v1.2.0
 	github.com/kr/pretty v0.1.0 // indirect
