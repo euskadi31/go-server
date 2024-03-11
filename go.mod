@@ -5,7 +5,7 @@ require (
 	github.com/PuerkitoBio/urlesc v0.0.0-20170810143723-de5bf2ad4578 // indirect
 	github.com/asaskevich/govalidator v0.0.0-20171111151018-521b25f4b05f // indirect
 	github.com/go-openapi/analysis v0.0.0-20171226173743-0db1e4cf47d6 // indirect
-	github.com/go-openapi/errors v0.0.0-20180827163446-87bb65328877
+	github.com/go-openapi/errors v0.22.0
 	github.com/go-openapi/jsonpointer v0.0.0-20180825180259-52eb3d4b47c6 // indirect
 	github.com/go-openapi/jsonreference v0.0.0-20180825180305-1c6a3fa339f2 // indirect
 	github.com/go-openapi/loads v0.0.0-20171207192234-2a2b323bab96 // indirect
@@ -21,7 +21,6 @@ require (
 	github.com/gorilla/handlers v1.5.2
 	github.com/gorilla/mux v1.8.1
 	github.com/justinas/alice v1.2.0
-	github.com/kr/pretty v0.1.0 // indirect
 	github.com/mailru/easyjson v0.0.0-20171120080333-32fa128f234d // indirect
 	github.com/mitchellh/mapstructure v0.0.0-20171017171808-06020f85339e // indirect
 	github.com/opentracing/opentracing-go v1.2.0
@@ -29,10 +28,9 @@ require (
 	github.com/prometheus/client_golang v0.9.4
 	github.com/rs/cors v1.10.1
 	github.com/rs/zerolog v1.32.0
-	github.com/stretchr/testify v1.8.4
+	github.com/stretchr/testify v1.9.0
 	github.com/zenazn/goji v1.0.1
 	golang.org/x/text v0.14.0
-	gopkg.in/check.v1 v1.0.0-20180628173108-788fd7840127 // indirect
 	gopkg.in/mgo.v2 v2.0.0-20160818020120-3f83fa500528 // indirect
 	gopkg.in/yaml.v2 v2.2.2 // indirect
 )
