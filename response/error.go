@@ -4,35 +4,35 @@
 
 package response
 
-// ErrorMessageInterface interface
+// ErrorMessageInterface interface.
 type ErrorMessageInterface interface {
 	GetCode() int
 	GetMessage() string
 	Error() string
 }
 
-// ErrorMessage struct
+// ErrorMessage struct.
 type ErrorMessage struct {
 	Code    int    `json:"code"`
 	Message string `json:"message"`
 }
 
-// Error implements ErrorMessageInterface
+// Error implements ErrorMessageInterface.
 func (e ErrorMessage) Error() string {
 	return e.Message
 }
 
-// GetCode implements ErrorMessageInterface
+// GetCode implements ErrorMessageInterface.
 func (e ErrorMessage) GetCode() int {
 	return e.Code
 }
 
-// GetMessage implements ErrorMessageInterface
+// GetMessage implements ErrorMessageInterface.
 func (e ErrorMessage) GetMessage() string {
 	return e.Message
 }
 
-// ValidatorError struct
+// ValidatorError struct.
 type ValidatorError struct {
 	Code    int32         `json:"code,omitempty"`
 	Name    string        `json:"name,omitempty"`
@@ -46,12 +46,12 @@ func (e ValidatorError) Error() string {
 	return e.Message
 }
 
-// ErrorResponse struct
+// ErrorResponse struct.
 type ErrorResponse struct {
 	Error ErrorMessage `json:"error"`
 }
 
-// ErrorsResponse struct
+// ErrorsResponse struct.
 type ErrorsResponse struct {
 	Errors []error `json:"errors"`
 }

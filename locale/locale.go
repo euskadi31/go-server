@@ -4,7 +4,7 @@
 
 package locale
 
-// Locale struct
+// Locale struct.
 type Locale struct {
 	Language string
 	Region   string

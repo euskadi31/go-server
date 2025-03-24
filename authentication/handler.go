@@ -13,11 +13,10 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
-// Handler authentication
+// Handler authentication.
 func Handler(config *Configuration, provider Provider) func(http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-
 			// Skip public endpoints
 			if r.URL.Path == "/health" || r.URL.Path == "/metrics" {
 				next.ServeHTTP(w, r)

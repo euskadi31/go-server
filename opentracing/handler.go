@@ -26,7 +26,7 @@ func IgnoreNone(*http.Request) bool {
 	return false
 }
 
-// Handler opentracing
+// Handler opentracing.
 func Handler(tracer opentracing.Tracer, ignore RequestIgnorerFunc) func(next http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
@@ -66,7 +66,7 @@ func Handler(tracer opentracing.Tracer, ignore RequestIgnorerFunc) func(next htt
 
 			next.ServeHTTP(lw, req)
 
-			ext.HTTPStatusCode.Set(span, uint16(lw.Status()))
+			ext.HTTPStatusCode.Set(span, uint16(lw.Status())) // nolint: gosec
 
 			span.SetTag("result", statusCodeResult(lw.Status()))
 		})
@@ -87,25 +87,31 @@ func routeRequestName(req *http.Request) string {
 
 func serverRequestName(req *http.Request) string {
 	var b strings.Builder
+
 	b.Grow(len(req.Method) + len(req.URL.Path) + 1)
 	b.WriteString(req.Method)
 	b.WriteByte(' ')
 	b.WriteString(req.URL.Path)
+
 	return b.String()
 }
 
 // massageTemplate removes the regexp patterns from template variables.
 func massageTemplate(tpl string) string {
 	braces := braceIndices(tpl)
+
 	if len(braces) == 0 {
 		return tpl
 	}
 
 	buf := bytes.NewBuffer(make([]byte, 0, len(tpl)))
+
 	for i := 0; i < len(tpl); {
 		var j int
+
 		if i < braces[0] {
 			j = braces[0]
+
 			buf.WriteString(tpl[i:j])
 		} else {
 			j = braces[1]
@@ -119,8 +125,10 @@ func massageTemplate(tpl string) string {
 			}
 
 			braces = braces[2:]
+
 			if len(braces) == 0 {
 				buf.WriteString(tpl[j:])
+
 				break
 			}
 		}
@@ -136,6 +144,7 @@ func massageTemplate(tpl string) string {
 // as otherwise the path wouldn't have been registered correctly.
 func braceIndices(s string) []int {
 	var level, idx int
+
 	var idxs []int
 
 	for i := 0; i < len(s); i++ {

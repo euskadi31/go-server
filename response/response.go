@@ -6,13 +6,14 @@ package response
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
 	"reflect"
 	"strconv"
 	"time"
 
-	"github.com/go-openapi/errors"
+	oapierr "github.com/go-openapi/errors"
 	"github.com/go-openapi/validate"
 	"github.com/rs/zerolog/log"
 )
@@ -36,7 +37,7 @@ func httpResponseStruct(v reflect.Value) reflect.Value {
 	return httpResponseStruct(v.FieldByName("ResponseWriter").Elem())
 }
 
-// NotFoundFailure response
+// NotFoundFailure response.
 func NotFoundFailure(w http.ResponseWriter, r *http.Request) {
 	Failure(w, http.StatusNotFound, ErrorMessage{
 		Code:    http.StatusNotFound,
@@ -44,7 +45,7 @@ func NotFoundFailure(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
-// MethodNotAllowedFailure response
+// MethodNotAllowedFailure response.
 func MethodNotAllowedFailure(w http.ResponseWriter, r *http.Request) {
 	Failure(w, http.StatusMethodNotAllowed, ErrorMessage{
 		Code:    http.StatusMethodNotAllowed,
@@ -52,7 +53,7 @@ func MethodNotAllowedFailure(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
-// InternalServerFailure response
+// InternalServerFailure response.
 func InternalServerFailure(w http.ResponseWriter) {
 	Failure(w, http.StatusInternalServerError, ErrorMessage{
 		Code:    http.StatusInternalServerError,
@@ -60,7 +61,7 @@ func InternalServerFailure(w http.ResponseWriter) {
 	})
 }
 
-// ServiceUnavailableFailure response
+// ServiceUnavailableFailure response.
 func ServiceUnavailableFailure(w http.ResponseWriter, retry time.Duration) {
 	w.Header().Set("Retry-After", strconv.FormatInt(int64(retry.Seconds()), 10))
 
@@ -70,7 +71,7 @@ func ServiceUnavailableFailure(w http.ResponseWriter, retry time.Duration) {
 	})
 }
 
-// FailureFromError write ErrorMessage from error
+// FailureFromError write ErrorMessage from error.
 func FailureFromError(w http.ResponseWriter, status int, err error) {
 	Failure(w, status, ErrorMessage{
 		Code:    status,
@@ -78,7 +79,7 @@ func FailureFromError(w http.ResponseWriter, status int, err error) {
 	})
 }
 
-// Failure response
+// Failure response.
 func Failure(w http.ResponseWriter, status int, err ErrorMessage) {
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 	w.Header().Set("X-Content-Type-Options", "nosniff")
@@ -93,7 +94,7 @@ func Failure(w http.ResponseWriter, status int, err ErrorMessage) {
 	}
 }
 
-// FailureFromValidator response
+// FailureFromValidator response.
 func FailureFromValidator(w http.ResponseWriter, result *validate.Result) {
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 	w.Header().Set("X-Content-Type-Options", "nosniff")
@@ -104,7 +105,8 @@ func FailureFromValidator(w http.ResponseWriter, result *validate.Result) {
 	for _, err := range result.Errors {
 		var item error
 
-		if errValidator, ok := err.(*errors.Validation); ok {
+		var errValidator *oapierr.Validation
+		if errors.As(err, &errValidator) {
 			item = ValidatorError{
 				Code:    errValidator.Code(),
 				In:      errValidator.In,

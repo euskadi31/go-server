@@ -6,6 +6,7 @@ package response
 
 import (
 	"errors"
+	"io"
 	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
@@ -26,7 +27,7 @@ func TestEncode(t *testing.T) {
 
 	Encode(w, req, http.StatusOK, true)
 
-	body, err := ioutil.ReadAll(w.Body)
+	body, err := io.ReadAll(w.Body)
 	assert.NoError(t, err)
 
 	assert.Equal(t, http.StatusOK, w.Code)

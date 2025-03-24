@@ -12,13 +12,13 @@ import (
 	"golang.org/x/text/language"
 )
 
-// DefaultLanguage var
+// DefaultLanguage var.
 var DefaultLanguage = "en"
 
-// DefaultRegion var
+// DefaultRegion var.
 var DefaultRegion = "US"
 
-// DefaultSupported language
+// DefaultSupported language.
 var DefaultSupported = []string{
 	DefaultLanguage, // en: first language is fallback
 }
@@ -29,12 +29,12 @@ const (
 	contextKey key = iota
 )
 
-// Handler middleware
+// Handler middleware.
 func Handler() func(next http.Handler) http.Handler {
 	return HandlerWithConfig(DefaultSupported)
 }
 
-// HandlerWithConfig middleware
+// HandlerWithConfig middleware.
 func HandlerWithConfig(languages []string) func(next http.Handler) http.Handler {
 	supported := []language.Tag{}
 
@@ -73,12 +73,12 @@ func HandlerWithConfig(languages []string) func(next http.Handler) http.Handler 
 	}
 }
 
-// ToContext add Locale to Context
+// ToContext add Locale to Context.
 func ToContext(ctx context.Context, locale Locale) context.Context {
 	return context.WithValue(ctx, contextKey, locale)
 }
 
-// FromContext returns Locale from Context
+// FromContext returns Locale from Context.
 func FromContext(ctx context.Context) Locale {
 	value, ok := ctx.Value(contextKey).(Locale)
 	if ok {

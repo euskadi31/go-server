@@ -68,6 +68,7 @@ func main() {
 		response.Encode(w, r, http.StatusCreated, u)
 	}).Methods(http.MethodPost)
 
+	// nolint: gosec
 	if err := http.ListenAndServe(":1337", router); err != nil {
 		panic(err)
 	}

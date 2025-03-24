@@ -14,9 +14,10 @@ import (
 )
 
 // ResponseWriter interface for testing
-// Hack for generate mock
+// Hack for generate mock.
+// nolint: unused
+//
 //go:generate mockery -case=underscore -inpkg -name=responseWriter
-// nolint: deadcode,megacheck
 type responseWriter interface {
 	http.ResponseWriter
 }
@@ -27,7 +28,7 @@ func init() {
 	Register(encoder.JSON())
 }
 
-// Encode data to HTTP response
+// Encode data to HTTP response.
 func Encode(w http.ResponseWriter, r *http.Request, status int, data interface{}) {
 	offers := make([]string, 0, len(encoders))
 
@@ -51,6 +52,7 @@ func Encode(w http.ResponseWriter, r *http.Request, status int, data interface{}
 	}
 
 	w.WriteHeader(status)
+
 	if _, err := w.Write(buffer.Bytes()); err != nil {
 		log.Error().Err(err).Msg("cannot write buffer to response")
 	}

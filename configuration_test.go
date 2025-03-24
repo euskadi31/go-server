@@ -53,7 +53,6 @@ func TestHTTPSConfigurationAddr(t *testing.T) {
 }
 
 func TestConfigurationWithDefault(t *testing.T) {
-
 	cfg := ConfigurationWithDefault(nil)
 
 	assert.Equal(t, DefaultIdleTimeout, cfg.IdleTimeout)
@@ -62,6 +61,5 @@ func TestConfigurationWithDefault(t *testing.T) {
 	assert.Equal(t, DefaultWriteTimeout, cfg.WriteTimeout)
 	assert.NotNil(t, cfg.HTTPS)
 	assert.NotNil(t, cfg.HTTPS.TLSConfig)
-	assert.True(t, cfg.HTTPS.TLSConfig.PreferServerCipherSuites)
 	assert.Equal(t, DefaultMinVersion, cfg.HTTPS.TLSConfig.MinVersion)
 }

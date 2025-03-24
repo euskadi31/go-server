@@ -13,13 +13,13 @@ import (
 
 // see https://blog.cloudflare.com/exposing-go-on-the-internet/
 var (
-	// DefaultCurvePreferences defines the recommended elliptic curves for modern TLS
+	// DefaultCurvePreferences defines the recommended elliptic curves for modern TLS.
 	DefaultCurvePreferences = []tls.CurveID{
 		tls.CurveP256,
 		tls.X25519, // Go 1.8 only
 	}
 
-	// DefaultCipherSuites defines the recommended cipher suites for modern TLS
+	// DefaultCipherSuites defines the recommended cipher suites for modern TLS.
 	DefaultCipherSuites = []uint16{
 		tls.TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384,
 		tls.TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384,
@@ -34,22 +34,22 @@ var (
 		// tls.TLS_RSA_WITH_AES_128_GCM_SHA256,
 	}
 
-	// DefaultMinVersion defines the recommended minimum version to use for the TLS protocol (1.2)
+	// DefaultMinVersion defines the recommended minimum version to use for the TLS protocol (1.2).
 	DefaultMinVersion uint16 = tls.VersionTLS12
 
-	// DefaultReadTimeout sets the maximum time a client has to fully stream a request (5s)
+	// DefaultReadTimeout sets the maximum time a client has to fully stream a request (5s).
 	DefaultReadTimeout = 5 * time.Second
-	// DefaultWriteTimeout sets the maximum amount of time a handler has to fully process a request (10s)
+	// DefaultWriteTimeout sets the maximum amount of time a handler has to fully process a request (10s).
 	DefaultWriteTimeout = 10 * time.Second
 	// DefaultIdleTimeout sets the maximum amount of time a Keep-Alive connection can remain idle before
-	// being recycled (120s)
+	// being recycled (120s).
 	DefaultIdleTimeout = 120 * time.Second
 
-	// DefaultShutdownTimeout sets the maximum amount of time a shutdown
+	// DefaultShutdownTimeout sets the maximum amount of time a shutdown.
 	DefaultShutdownTimeout = 2 * time.Second
 )
 
-// Configuration struct
+// Configuration struct.
 type Configuration struct {
 	HTTP              *HTTPConfiguration
 	HTTPS             *HTTPSConfiguration
@@ -63,7 +63,7 @@ type Configuration struct {
 	HealthCheck       bool
 }
 
-// ConfigurationWithDefault return Configuration with default parameters
+// ConfigurationWithDefault return Configuration with default parameters.
 func ConfigurationWithDefault(cfg *Configuration) *Configuration {
 	if cfg == nil {
 		cfg = &Configuration{}
@@ -74,10 +74,11 @@ func ConfigurationWithDefault(cfg *Configuration) *Configuration {
 	}
 
 	if cfg.HTTPS.TLSConfig == nil {
-		cfg.HTTPS.TLSConfig = &tls.Config{}
+		cfg.HTTPS.TLSConfig = &tls.Config{
+			MinVersion: DefaultMinVersion,
+		}
 	}
 
-	cfg.HTTPS.TLSConfig.PreferServerCipherSuites = true
 	cfg.HTTPS.TLSConfig.MinVersion = DefaultMinVersion
 	cfg.HTTPS.TLSConfig.CurvePreferences = DefaultCurvePreferences
 	cfg.HTTPS.TLSConfig.CipherSuites = DefaultCipherSuites
@@ -101,7 +102,7 @@ func ConfigurationWithDefault(cfg *Configuration) *Configuration {
 	return cfg
 }
 
-// IsEnabled check if protocol is enabled
+// IsEnabled check if protocol is enabled.
 func (c Configuration) IsEnabled(protocol string) bool {
 	switch protocol {
 	case "http":
@@ -113,23 +114,23 @@ func (c Configuration) IsEnabled(protocol string) bool {
 	}
 }
 
-// HTTPConfiguration struct
+// HTTPConfiguration struct.
 type HTTPConfiguration struct {
 	Host string
 	Port int
 }
 
-// Addr string
+// Addr string.
 func (c HTTPConfiguration) Addr() string {
 	return net.JoinHostPort(c.Host, strconv.Itoa(c.Port))
 }
 
-// IsEnabled check if HTTP is enabled
+// IsEnabled check if HTTP is enabled.
 func (c HTTPConfiguration) IsEnabled() bool {
 	return c.Port > 0 && c.Port < 65535
 }
 
-// HTTPSConfiguration struct
+// HTTPSConfiguration struct.
 type HTTPSConfiguration struct {
 	Host      string
 	Port      int
@@ -138,12 +139,12 @@ type HTTPSConfiguration struct {
 	KeyFile   string
 }
 
-// Addr string
+// Addr string.
 func (c HTTPSConfiguration) Addr() string {
 	return net.JoinHostPort(c.Host, strconv.Itoa(c.Port))
 }
 
-// IsEnabled check if HTTP is enabled
+// IsEnabled check if HTTP is enabled.
 func (c HTTPSConfiguration) IsEnabled() bool {
 	return c.Port > 0 && c.Port < 65535 && c.CertFile != "" && c.KeyFile != ""
 }

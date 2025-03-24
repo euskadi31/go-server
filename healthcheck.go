@@ -8,13 +8,14 @@ import (
 	"sync"
 )
 
-// HealthCheckHandler type
+// HealthCheckHandler type.
+//
 //go:generate mockery -case=underscore -inpkg -name=HealthCheckHandler
 type HealthCheckHandler interface {
 	Check() bool
 }
 
-// HealthCheckHandlerFunc handler
+// HealthCheckHandlerFunc handler.
 type HealthCheckHandlerFunc func() bool
 
 // Check calls f().
@@ -22,7 +23,7 @@ func (f HealthCheckHandlerFunc) Check() bool {
 	return f()
 }
 
-// HealthCheckResponse struct
+// HealthCheckResponse struct.
 type HealthCheckResponse struct {
 	Status   bool            `json:"status"`
 	Services map[string]bool `json:"services"`
@@ -34,12 +35,17 @@ func healthCheckProcessor(healthchecks map[string]HealthCheckHandler) HealthChec
 		Services: make(map[string]bool, len(healthchecks)),
 	}
 
-	var wg = &sync.WaitGroup{}
-	var mutex = &sync.Mutex{}
+	var (
+		wg    = &sync.WaitGroup{}
+		mutex = &sync.Mutex{}
+	)
+
 	for name, handle := range healthchecks {
 		wg.Add(1)
+
 		go func(n string, h HealthCheckHandler) {
 			defer wg.Done()
+
 			mutex.Lock()
 			defer mutex.Unlock()
 

@@ -17,13 +17,13 @@ import (
 	"github.com/rs/cors"
 )
 
-// Router struct
+// Router struct.
 type Router struct {
 	*mux.Router
 	healthchecks map[string]HealthCheckHandler
 }
 
-// NewRouter constructor
+// NewRouter constructor.
 func NewRouter() *Router {
 	return &Router{
 		Router:       mux.NewRouter(),
@@ -31,7 +31,7 @@ func NewRouter() *Router {
 	}
 }
 
-// AddHealthCheck handler
+// AddHealthCheck handler.
 func (r *Router) AddHealthCheck(name string, handle HealthCheckHandler) error {
 	if _, ok := r.healthchecks[name]; ok {
 		return fmt.Errorf("the %s healthcheck handler already exists", name)
@@ -42,7 +42,7 @@ func (r *Router) AddHealthCheck(name string, handle HealthCheckHandler) error {
 	return nil
 }
 
-// EnableHealthCheck endpoint
+// EnableHealthCheck endpoint.
 func (r *Router) EnableHealthCheck() {
 	r.HandleFunc("/health", r.healthHandler).Methods(http.MethodGet, http.MethodHead)
 }
@@ -59,14 +59,14 @@ func (r *Router) healthHandler(w http.ResponseWriter, req *http.Request) {
 	response.Encode(w, req, code, resp)
 }
 
-// EnableMetrics endpoint
+// EnableMetrics endpoint.
 func (r *Router) EnableMetrics() {
 	r.Use(metrics.Handler())
 
 	r.Handle("/metrics", promhttp.Handler()).Methods(http.MethodGet)
 }
 
-// EnableCors for all endpoint
+// EnableCors for all endpoint.
 func (r *Router) EnableCors() {
 	r.EnableCorsWithOptions(cors.Options{
 		AllowedOrigins: []string{"*"},
@@ -82,7 +82,7 @@ func (r *Router) EnableProxy() {
 	}())
 }
 
-// EnableProfiling with pprof
+// EnableProfiling with pprof.
 func (r *Router) EnableProfiling() {
 	r.HandleFunc("/debug/pprof", pprof.Index).Methods(http.MethodGet)
 	r.HandleFunc("/debug/pprof/cmdline", pprof.Cmdline).Methods(http.MethodGet)
@@ -96,12 +96,12 @@ func (r *Router) EnableProfiling() {
 	r.Handle("/debug/pprof/threadcreate", pprof.Handler("threadcreate")).Methods(http.MethodGet)
 }
 
-// EnableRecovery for all endpoint
+// EnableRecovery for all endpoint.
 func (r *Router) EnableRecovery() {
 	r.Use(handlers.RecoveryHandler(handlers.PrintRecoveryStack(true)))
 }
 
-// EnableCorsWithOptions for all endpoint
+// EnableCorsWithOptions for all endpoint.
 func (r *Router) EnableCorsWithOptions(options cors.Options) {
 	c := cors.New(options)
 
@@ -112,7 +112,7 @@ func (r *Router) EnableCorsWithOptions(options cors.Options) {
 	}))
 }
 
-// AddController to Router
+// AddController to Router.
 func (r *Router) AddController(controller Controller) {
 	controller.Mount(r)
 }
@@ -141,12 +141,12 @@ func (r *Router) AddPrefixRouteFunc(prefix string, handler http.HandlerFunc) *mu
 	return r.PathPrefix(prefix).HandlerFunc(handler)
 }
 
-// SetNotFound handler
+// SetNotFound handler.
 func (r *Router) SetNotFound(handler http.Handler) {
-	r.Router.NotFoundHandler = handler
+	r.NotFoundHandler = handler
 }
 
-// SetNotFoundFunc handler
+// SetNotFoundFunc handler.
 func (r *Router) SetNotFoundFunc(handler http.HandlerFunc) {
-	r.Router.NotFoundHandler = handler
+	r.NotFoundHandler = handler
 }

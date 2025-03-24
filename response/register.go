@@ -10,7 +10,7 @@ import (
 
 var encoders = map[string]encoder.Encoder{}
 
-// Register encoder provider
+// Register encoder provider.
 func Register(encoder encoder.Encoder) {
 	encoders[encoder.MimeType()] = encoder
 }

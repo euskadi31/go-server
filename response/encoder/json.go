@@ -12,7 +12,7 @@ import (
 type jsonEncoder struct {
 }
 
-// JSON construct
+// JSON construct.
 func JSON() Encoder {
 	return &jsonEncoder{}
 }
@@ -22,5 +22,5 @@ func (jsonEncoder) MimeType() string {
 }
 
 func (jsonEncoder) Encode(w io.Writer, data interface{}) error {
-	return json.NewEncoder(w).Encode(data)
+	return json.NewEncoder(w).Encode(data) // nolint: wrapcheck
 }

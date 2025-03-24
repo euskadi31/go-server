@@ -4,7 +4,7 @@
 
 package authentication
 
-// Configuration struct
+// Configuration struct.
 type Configuration struct {
 	Realm string
 }

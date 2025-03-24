@@ -8,7 +8,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"reflect"
@@ -22,19 +21,20 @@ import (
 )
 
 // ioReader interface for testing
-// Hack for generate mock
+// Hack for generate mock.
+// nolint:unused
+//
 //go:generate mockery -case=underscore -inpkg -name=ioReader
-// nolint: deadcode,megacheck
 type ioReader interface {
 	io.Reader
 }
 
-// ErrSchemaFileFormatNotSupported type
+// ErrSchemaFileFormatNotSupported type.
 type ErrSchemaFileFormatNotSupported struct {
 	Ext string
 }
 
-// NewErrSchemaFileFormatNotSupported error
+// NewErrSchemaFileFormatNotSupported error.
 func NewErrSchemaFileFormatNotSupported(ext string) error {
 	return &ErrSchemaFileFormatNotSupported{
 		Ext: ext,
@@ -45,12 +45,12 @@ func (e *ErrSchemaFileFormatNotSupported) Error() string {
 	return fmt.Sprintf("%s file schema is not supported", e.Ext)
 }
 
-// ErrSchemaNotFound type
+// ErrSchemaNotFound type.
 type ErrSchemaNotFound struct {
 	Name string
 }
 
-// NewErrSchemaNotFound error
+// NewErrSchemaNotFound error.
 func NewErrSchemaNotFound(name string) error {
 	return &ErrSchemaNotFound{
 		Name: name,
@@ -61,29 +61,30 @@ func (e *ErrSchemaNotFound) Error() string {
 	return fmt.Sprintf(`schema "%s" not found`, e.Name)
 }
 
-// SchemaValidator interface experimental
+// SchemaValidator interface experimental.
+//
 //go:generate mockery -case=underscore -inpkg -name=SchemaValidator
 type SchemaValidator interface {
 	SchemaValidator() *spec.Schema
 }
 
-// Validator struct
+// Validator struct.
 type Validator struct {
 	schemas map[string]*validate.SchemaValidator
 }
 
-// NewValidator constructor
+// NewValidator constructor.
 func NewValidator() *Validator {
 	return &Validator{
 		schemas: make(map[string]*validate.SchemaValidator),
 	}
 }
 
-// AddSchemaFromFile name
+// AddSchemaFromFile name.
 func (v *Validator) AddSchemaFromFile(name string, filename string) error {
 	file, err := os.Open(filename)
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to open file: %w", err)
 	}
 
 	defer func() {
@@ -95,11 +96,11 @@ func (v *Validator) AddSchemaFromFile(name string, filename string) error {
 	return v.AddSchemaFromReader(name, strings.Trim(filepath.Ext(filename), "."), file)
 }
 
-// AddSchemaFromReader func
+// AddSchemaFromReader func.
 func (v *Validator) AddSchemaFromReader(name string, format string, reader io.Reader) error {
-	b, err := ioutil.ReadAll(reader)
+	b, err := io.ReadAll(reader)
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to read file: %w", err)
 	}
 
 	switch format {
@@ -112,29 +113,29 @@ func (v *Validator) AddSchemaFromReader(name string, format string, reader io.Re
 	}
 }
 
-// AddSchemaFromJSON string
+// AddSchemaFromJSON string.
 func (v *Validator) AddSchemaFromJSON(name string, content json.RawMessage) error {
 	var schema spec.Schema
 
 	if err := json.Unmarshal(content, &schema); err != nil {
-		return err
+		return fmt.Errorf("failed to unmarshal json: %w", err)
 	}
 
 	return v.AddSchema(name, &schema)
 }
 
-// AddSchemaFromYAML string
+// AddSchemaFromYAML string.
 func (v *Validator) AddSchemaFromYAML(name string, content []byte) error {
 	var schema spec.Schema
 
 	if err := yaml.Unmarshal(content, &schema); err != nil {
-		return err
+		return fmt.Errorf("failed to unmarshal yaml: %w", err)
 	}
 
 	return v.AddSchema(name, &schema)
 }
 
-// AddSchema by name
+// AddSchema by name.
 func (v *Validator) AddSchema(name string, schema *spec.Schema) error {
 	validator := validate.NewSchemaValidator(schema, nil, "", strfmt.Default)
 
@@ -143,19 +144,19 @@ func (v *Validator) AddSchema(name string, schema *spec.Schema) error {
 	return nil
 }
 
-// AddSchemFromObject experimental
+// AddSchemFromObject experimental.
 func (v *Validator) AddSchemFromObject(object SchemaValidator) error {
 	rt := reflect.TypeOf(object)
 
 	return v.AddSchemFromObjectName(rt.Name(), object)
 }
 
-// AddSchemFromObjectName experimental
+// AddSchemFromObjectName experimental.
 func (v *Validator) AddSchemFromObjectName(name string, object SchemaValidator) error {
 	return v.AddSchema(name, object.SchemaValidator())
 }
 
-// Validate data
+// Validate data.
 func (v Validator) Validate(name string, data interface{}) *validate.Result {
 	result := &validate.Result{}
 

@@ -8,7 +8,8 @@ import (
 	"io"
 )
 
-// Encoder provider
+// Encoder provider.
+//
 //go:generate mockery -case=underscore -inpkg -name=Encoder
 type Encoder interface {
 	MimeType() string

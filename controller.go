@@ -4,7 +4,7 @@
 
 package server
 
-// Controller interface
+// Controller interface.
 type Controller interface {
 	Mount(r *Router)
 }

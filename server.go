@@ -12,7 +12,7 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
-// Server struct
+// Server struct.
 type Server struct {
 	*Router
 	cfg         *Configuration
@@ -20,7 +20,7 @@ type Server struct {
 	httpsServer *http.Server
 }
 
-// New Server
+// New Server.
 func New(cfg *Configuration) *Server {
 	return &Server{
 		Router: NewRouter(),
@@ -42,7 +42,7 @@ func (s *Server) runHTTPServer() error {
 		IdleTimeout:       s.cfg.IdleTimeout,
 	}
 
-	return s.httpServer.ListenAndServe()
+	return s.httpServer.ListenAndServe() // nolint: wrapcheck
 }
 
 func (s *Server) runHTTPSServer() error {
@@ -60,27 +60,27 @@ func (s *Server) runHTTPSServer() error {
 		IdleTimeout:       s.cfg.IdleTimeout,
 	}
 
-	return s.httpsServer.ListenAndServeTLS(s.cfg.HTTPS.CertFile, s.cfg.HTTPS.KeyFile)
+	return s.httpsServer.ListenAndServeTLS(s.cfg.HTTPS.CertFile, s.cfg.HTTPS.KeyFile) // nolint: wrapcheck
 }
 
-// Run Server
+// Run Server.
 func (s *Server) Run() (err error) {
 	if !s.cfg.IsEnabled("http") && !s.cfg.IsEnabled("https") {
 		return errors.New("http or https server is not configured")
 	}
 
-	s.Router.EnableRecovery()
+	s.EnableRecovery()
 
 	if s.cfg.HealthCheck {
-		s.Router.EnableHealthCheck()
+		s.EnableHealthCheck()
 	}
 
 	if s.cfg.Metrics {
-		s.Router.EnableMetrics()
+		s.EnableMetrics()
 	}
 
 	if s.cfg.Profiling {
-		s.Router.EnableProfiling()
+		s.EnableProfiling()
 	}
 
 	if s.cfg.IsEnabled("http") {
@@ -105,7 +105,7 @@ func (s *Server) Run() (err error) {
 	return nil
 }
 
-// Shutdown server
+// Shutdown server.
 func (s *Server) Shutdown() (err error) {
 	if s.httpServer != nil {
 		log.Info().Msg("Shutting down HTTP server...")

@@ -6,7 +6,8 @@ package authentication
 
 import "net/http"
 
-// Provider interface
+// Provider interface.
+//
 //go:generate mockery -case=underscore -inpkg -name=Provider
 type Provider interface {
 	Validate(r *http.Request) bool
