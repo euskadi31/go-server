@@ -1,7 +1,7 @@
 module github.com/euskadi31/go-server
 
 require (
-	github.com/go-openapi/errors v0.0.0-20180827163446-87bb65328877
+	github.com/go-openapi/errors v0.22.2
 	github.com/go-openapi/spec v0.0.0-20171219195406-fa03337d7da5
 	github.com/go-openapi/strfmt v0.0.0-20171222154016-4dd3d302e100
 	github.com/go-openapi/validate v0.0.0-20180110180619-fa47bbf926a7
@@ -34,7 +34,6 @@ require (
 	github.com/go-openapi/swag v0.0.0-20180908172849-dd0dad036e67 // indirect
 	github.com/golang/protobuf v1.3.2 // indirect
 	github.com/google/go-cmp v0.6.0 // indirect
-	github.com/kr/pretty v0.1.0 // indirect
 	github.com/mailru/easyjson v0.0.0-20171120080333-32fa128f234d // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect
 	github.com/mattn/go-isatty v0.0.19 // indirect
@@ -48,7 +47,6 @@ require (
 	github.com/stretchr/objx v0.5.2 // indirect
 	golang.org/x/net v0.38.0 // indirect
 	golang.org/x/sys v0.31.0 // indirect
-	gopkg.in/check.v1 v1.0.0-20180628173108-788fd7840127 // indirect
 	gopkg.in/mgo.v2 v2.0.0-20160818020120-3f83fa500528 // indirect
 	gopkg.in/yaml.v2 v2.2.8 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
