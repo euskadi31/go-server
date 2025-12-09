@@ -1,7 +1,7 @@
 module github.com/euskadi31/go-server
 
 require (
-	github.com/go-openapi/errors v0.0.0-20180827163446-87bb65328877
+	github.com/go-openapi/errors v0.22.5
 	github.com/go-openapi/spec v0.22.1
 	github.com/go-openapi/strfmt v0.0.0-20171222154016-4dd3d302e100
 	github.com/go-openapi/validate v0.0.0-20180110180619-fa47bbf926a7
