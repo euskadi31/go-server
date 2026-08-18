@@ -14,7 +14,7 @@ require (
 	github.com/prometheus/client_golang v0.9.4
 	github.com/rs/cors v1.11.1
 	github.com/rs/zerolog v1.35.1
-	github.com/stretchr/testify v1.11.1
+	github.com/stretchr/testify v1.12.0
 	github.com/zenazn/goji v1.0.1
 	golang.org/x/text v0.41.0
 )
@@ -22,7 +22,6 @@ require (
 require (
 	github.com/asaskevich/govalidator v0.0.0-20171111151018-521b25f4b05f // indirect
 	github.com/beorn7/perks v1.0.0 // indirect
-	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/felixge/httpsnoop v1.0.3 // indirect
 	github.com/go-openapi/analysis v0.0.0-20171226173743-0db1e4cf47d6 // indirect
 	github.com/go-openapi/jsonpointer v0.22.1 // indirect
@@ -45,11 +44,10 @@ require (
 	github.com/matttproud/golang_protobuf_extensions v1.0.1 // indirect
 	github.com/mitchellh/mapstructure v0.0.0-20171017171808-06020f85339e // indirect
 	github.com/pborman/uuid v1.2.0 // indirect
-	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/prometheus/client_model v0.0.0-20190129233127-fd36f4220a90 // indirect
 	github.com/prometheus/common v0.4.1 // indirect
 	github.com/prometheus/procfs v0.0.2 // indirect
-	github.com/stretchr/objx v0.5.2 // indirect
+	github.com/stretchr/objx v0.5.3 // indirect
 	go.yaml.in/yaml/v3 v3.0.4 // indirect
 	golang.org/x/net v0.38.0 // indirect
 	golang.org/x/sys v0.31.0 // indirect
